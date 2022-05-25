@@ -1,7 +1,8 @@
 import os
-
+import sys
 from get_config import get_args_and_wandb
-from func.wandb_logger import write_wandb_scalar
+
+from script_manager.func.wandb_logger import write_wandb_scalar
 
 if __name__ == '__main__':
     args = get_args_and_wandb()

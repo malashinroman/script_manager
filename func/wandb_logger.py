@@ -6,7 +6,10 @@ from tensorboardX.writer import SummaryWriter
 
 import os.path as osp
 
+from local_config import WANDB_LOGIN
+
 __WANDB_LOG__ = None
+
 
 class WandbLogger(object):
 
@@ -30,8 +33,6 @@ class WandbLogger(object):
             self._writer = SummaryWriter(log_dir=log_dir)
 
 
-
-
 def init_wandb_logger(args, wandb_entity):
     global __WANDB_LOG__
     __WANDB_LOG__ = WandbLogger(args, wandb_entity)
@@ -43,6 +44,7 @@ def update_args_from_wandb(args):
     else:
         return args
 
+
 def write_wandb_scalar(tag, scalar_value, global_step=None):
     global __WANDB_LOG__
     if __WANDB_LOG__._writer is not None:
@@ -51,6 +53,11 @@ def write_wandb_scalar(tag, scalar_value, global_step=None):
     if __WANDB_LOG__.use_wandb:
         wandb.log({tag: scalar_value, 'global_step': global_step})
 
+
+def prepare_wandb(args):
+    init_wandb_logger(args, WANDB_LOGIN)
+    updated_args = update_args_from_wandb(args)
+    return updated_args
 # def init_wandb_log():
 #     global wandb_log
 #
