@@ -1,10 +1,9 @@
-from copy import deepcopy
-
-from script_manager.func.make_command import make_command2
-from script_manager.func.run_series_of_experiments import run_async
-from pathlib import Path
 import os
+from copy import deepcopy
+from pathlib import Path
+from script_manager.func.make_command import make_command2
 from script_manager.func.script_parse_args import get_script_args
+from script_manager.func.run_series_of_experiments import run_async
 
 
 def update_with_test_dict(full_config, test_dict):
@@ -12,7 +11,12 @@ def update_with_test_dict(full_config, test_dict):
     full_config.update(test_dict)
     if "wandb_project_name" in full_config:
         if full_config["wandb_project_name"] is not None:
-            full_config["wandb_project_name"] = "debug_" + full_config["wandb_project_name"]
+            full_config["wandb_project_name"] = (
+                "debug_" + full_config["wandb_project_name"]
+            )
+    if "tag" in full_config:
+        full_config["tag"] = "test_" + full_config["tag"]
+
     return full_config
 
 
@@ -37,8 +41,14 @@ def get_cwd(args, file_path):
 
 
 def configs2cmds(
-        full_configs, default_parameters, main_script, args, folder_keys, appedix_keys, test_parameters,
-        wandb_project_name
+    full_configs,
+    default_parameters,
+    main_script,
+    args,
+    folder_keys,
+    appedix_keys,
+    test_parameters,
+    wandb_project_name,
 ):
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
@@ -82,8 +92,17 @@ def run_cmds(run_list, cwd, args):
     run_async(run_list, parallel_num=args.parallel_num, cwd=cwd)
 
 
-def do_everything(default_parameters, configs, extra_folder_keys, appendix_keys, main_script, test_parameters,
-                  wandb_project_name, script_file):
+def do_everything(
+    default_parameters,
+    configs,
+    extra_folder_keys,
+    appendix_keys,
+    main_script,
+    test_parameters,
+    wandb_project_name,
+    script_file,
+):
+
     args = get_script_args()
 
     work_dir = get_cwd(args, script_file)
@@ -104,6 +123,6 @@ def do_everything(default_parameters, configs, extra_folder_keys, appendix_keys,
         folder_keys,
         appedix_keys=appendix_keys,
         test_parameters=test_parameters,
-        wandb_project_name=wandb_project_name
+        wandb_project_name=wandb_project_name,
     )
     run_cmds(run_list, work_dir, args)
