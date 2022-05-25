@@ -1,5 +1,5 @@
 import argparse
-from script_manager.wandb_logger import init_wandb_logger, update_args_from_wandb
+from func.wandb_logger import init_wandb_logger, update_args_from_wandb
 from local_config import WANDB_LOGIN
 
 def get_args():

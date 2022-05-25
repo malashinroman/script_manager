@@ -3,13 +3,13 @@ import sys
 from copy import deepcopy
 
 sys.path.append(".")
-from script_manager.make_command import make_command2
+from func.make_command import make_command2
 from local_config import IMAGENET_PATH
 
 from pathlib import Path
 
-from script_manager.run_series_of_experiments import run_async
-from script_manager.script_parse_args import get_script_args
+from func.run_series_of_experiments import run_async
+from func.script_parse_args import get_script_args
 
 
 def get_main_script():

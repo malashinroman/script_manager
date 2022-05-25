@@ -18,6 +18,7 @@ train_results
 local_config.py
 checkpoints
 
+#--> copypaste from Dassl.pytorch
 
 # Distribution / packaging
 .Python
