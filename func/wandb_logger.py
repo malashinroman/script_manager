@@ -16,7 +16,17 @@ class WandbLogger(object):
     def __init__(self, args, wandb_entity):
         super().__init__()
         self._args = args
-        log_dir = osp.join(self._args.output_dir, "tensorboard")
+        if args.tensorboard_folder is not None:
+            self.use_tensorboard = True
+            log_dir = osp.join(self._args.output_dir, "tensorboard")
+            if self.__dict__.get("_writer") is None or self._writer is None:
+                print(
+                    "Initializing summary writer for tensorboard "
+                    "with log_dir={}".format(log_dir)
+                )
+                self._writer = SummaryWriter(log_dir=log_dir)
+        else:
+            self.use_tensorboard = False
 
         if args.wandb_project_name is not None:
             self.use_wandb = True
@@ -24,13 +34,6 @@ class WandbLogger(object):
             wandb.run.name = args.tag + wandb.run.name
         else:
             self.use_wandb = False
-
-        if self.__dict__.get("_writer") is None or self._writer is None:
-            print(
-                "Initializing summary writer for tensorboard "
-                "with log_dir={}".format(log_dir)
-            )
-            self._writer = SummaryWriter(log_dir=log_dir)
 
 
 def init_wandb_logger(args, wandb_entity):
@@ -47,7 +50,7 @@ def update_args_from_wandb(args):
 
 def write_wandb_scalar(tag, scalar_value, global_step=None):
     global __WANDB_LOG__
-    if __WANDB_LOG__._writer is not None:
+    if __WANDB_LOG__.use_tensorboard:
         __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
 
     if __WANDB_LOG__.use_wandb:
@@ -58,6 +61,3 @@ def prepare_wandb(args):
     init_wandb_logger(args, WANDB_LOGIN)
     updated_args = update_args_from_wandb(args)
     return updated_args
-# def init_wandb_log():
-#     global wandb_log
-#
