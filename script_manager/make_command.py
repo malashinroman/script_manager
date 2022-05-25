@@ -69,7 +69,7 @@ def make_command2(
         print(output)
         os.makedirs(output)
 
-    cmd = f"python {script_name} --output-dir={output} "
+    cmd = f"python {script_name} --output_dir={output} "
 
     for key, val in param_dict.items():
         if val != "parameter_without_value":
