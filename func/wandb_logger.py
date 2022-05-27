@@ -31,7 +31,7 @@ class WandbLogger(object):
         if args.wandb_project_name is not None:
             self.use_wandb = True
             wandb.init(project=args.wandb_project_name, entity=wandb_entity, config=args)
-            wandb.run.name = args.tag + wandb.run.name
+            wandb.run.name = args.tag + '_' + wandb.run.name
         else:
             self.use_wandb = False
 
