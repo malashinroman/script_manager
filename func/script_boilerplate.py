@@ -12,7 +12,7 @@ def update_with_test_dict(full_config, test_dict):
     if "wandb_project_name" in full_config:
         if full_config["wandb_project_name"] is not None:
             full_config["wandb_project_name"] = (
-                "debug_" + full_config["wandb_project_name"]
+                    "debug_" + full_config["wandb_project_name"]
             )
     if "tag" in full_config:
         full_config["tag"] = "test_" + full_config["tag"]
@@ -40,15 +40,39 @@ def get_cwd(args, file_path):
     return cwd
 
 
+def update_dict_from_opt_args(opt_args):
+    ret_d = {}
+    # assert (len(opt_args) % 2 == 0)
+    k = 0
+    current_key = None
+    for el in opt_args:
+        if el[0] == '-':
+            if current_key is not None:
+                ret_d[current_key] = "parameter_without_value"
+
+            current_key = el.strip('-')
+            # assert(current_key is None)
+        else:
+            assert (current_key is not None)
+            val = el
+            ret_d[current_key] = val
+            current_key = None
+
+    if current_key is not None:
+        ret_d[current_key] = "parameter_without_value"
+
+    return ret_d
+
+
 def configs2cmds(
-    full_configs,
-    default_parameters,
-    main_script,
-    args,
-    folder_keys,
-    appedix_keys,
-    test_parameters,
-    wandb_project_name,
+        full_configs,
+        default_parameters,
+        main_script,
+        args,
+        folder_keys,
+        appedix_keys,
+        test_parameters,
+        wandb_project_name,
 ):
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
@@ -56,6 +80,8 @@ def configs2cmds(
 
     # folder_keys, appedix_keys = get_name_keys()
     run_list = []
+    args_update = update_dict_from_opt_args(args.opts[1:])
+
     for data_configuration, output_forward_key in zip(configs, uof):
         configuration_dict = deepcopy(default_parameters)
         configuration_dict.update(data_configuration)
@@ -73,6 +99,7 @@ def configs2cmds(
         else:
             print("WARNING: no wandb logs are enabled")
 
+        configuration_dict.update(args_update)
         cmd0, pref_step_output = make_command2(
             configuration_dict, main_script, folder_keys, appedix_keys
         )
@@ -93,16 +120,15 @@ def run_cmds(run_list, cwd, args):
 
 
 def do_everything(
-    default_parameters,
-    configs,
-    extra_folder_keys,
-    appendix_keys,
-    main_script,
-    test_parameters,
-    wandb_project_name,
-    script_file,
+        default_parameters,
+        configs,
+        extra_folder_keys,
+        appendix_keys,
+        main_script,
+        test_parameters,
+        wandb_project_name,
+        script_file,
 ):
-
     args = get_script_args()
 
     work_dir = get_cwd(args, script_file)
