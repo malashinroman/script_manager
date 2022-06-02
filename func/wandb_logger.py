@@ -50,12 +50,17 @@ def update_args_from_wandb(args):
 
 def write_wandb_scalar(tag, scalar_value, global_step=None):
     global __WANDB_LOG__
+    logged = 0
     if __WANDB_LOG__.use_tensorboard:
         __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
+        logged = 1
 
     if __WANDB_LOG__.use_wandb:
         wandb.log({tag: scalar_value, 'global_step': global_step})
+        logged = 1
 
+    if not logged:
+        print("WARNING: write_wandb_scalar has no effect, because logger is not initialized")
 
 def prepare_wandb(args):
     init_wandb_logger(args, WANDB_LOGIN)
