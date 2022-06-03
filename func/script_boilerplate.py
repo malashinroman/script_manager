@@ -1,9 +1,10 @@
 import os
 from copy import deepcopy
 from pathlib import Path
+
 from script_manager.func.make_command import make_command2
-from script_manager.func.script_parse_args import get_script_args
 from script_manager.func.run_series_of_experiments import run_async
+from script_manager.func.script_parse_args import get_script_args
 
 
 def update_with_test_dict(full_config, test_dict):
@@ -12,7 +13,7 @@ def update_with_test_dict(full_config, test_dict):
     if "wandb_project_name" in full_config:
         if full_config["wandb_project_name"] is not None:
             full_config["wandb_project_name"] = (
-                    "debug_" + full_config["wandb_project_name"]
+                "debug_" + full_config["wandb_project_name"]
             )
     if "tag" in full_config:
         full_config["tag"] = "test_" + full_config["tag"]
@@ -33,7 +34,17 @@ def update_with_test_dict(full_config, test_dict):
 def get_cwd(args, file_path):
     path = Path(file_path)
     if args.cwd is None:
-        cwd = str(path.parent.parent.parent.parent.parent.absolute())
+        script_manager_found = False
+        c_path = path
+        while not script_manager_found:
+            sm_path = os.path.join(str(c_path), "script_manager")
+            if os.path.exists(sm_path):
+                script_manager_found = True
+                cwd = str(c_path)
+
+            c_path = c_path.parent
+        assert script_manager_found
+        # cwd = str(path.parent.parent.parent.parent.parent.absolute())
     else:
         cwd = args.cwd
     print({"cwd": cwd})
@@ -46,14 +57,14 @@ def update_dict_from_opt_args(opt_args):
     k = 0
     current_key = None
     for el in opt_args:
-        if el[0] == '-':
+        if el[0] == "-":
             if current_key is not None:
                 ret_d[current_key] = "parameter_without_value"
 
-            current_key = el.strip('-')
+            current_key = el.strip("-")
             # assert(current_key is None)
         else:
-            assert (current_key is not None)
+            assert current_key is not None
             val = el
             ret_d[current_key] = val
             current_key = None
@@ -65,14 +76,14 @@ def update_dict_from_opt_args(opt_args):
 
 
 def configs2cmds(
-        full_configs,
-        default_parameters,
-        main_script,
-        args,
-        folder_keys,
-        appedix_keys,
-        test_parameters,
-        wandb_project_name,
+    full_configs,
+    default_parameters,
+    main_script,
+    args,
+    folder_keys,
+    appedix_keys,
+    test_parameters,
+    wandb_project_name,
 ):
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
@@ -120,14 +131,14 @@ def run_cmds(run_list, cwd, args):
 
 
 def do_everything(
-        default_parameters,
-        configs,
-        extra_folder_keys,
-        appendix_keys,
-        main_script,
-        test_parameters,
-        wandb_project_name,
-        script_file,
+    default_parameters,
+    configs,
+    extra_folder_keys,
+    appendix_keys,
+    main_script,
+    test_parameters,
+    wandb_project_name,
+    script_file,
 ):
     args = get_script_args()
 
