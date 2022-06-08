@@ -152,6 +152,21 @@ def do_everything(
     ]
     # extra_folder_keys, appendix_keys = get_name_keys()
     folder_keys += extra_folder_keys
+
+    # if args.kill_concurrent_folders:
+    #     parent_dir = os.path.dirname(args.output_dir)
+    #     concurrent_folders = os.listdir(parent_dir)
+    #     for folder in concurrent_folders:
+    #         dir_to_remove = os.path.join(parent_dir, folder)
+    #         # Dirname has to be specific format with time
+    #         # For safety reasons
+    #
+    #         splits = folder.split('-')
+    #         if len(splits) > 4 and 'T' in splits[-3]:
+    #             shutil.rmtree(dir_to_remove)
+    #     else:
+    #         print(f"WARNING: Improper name, will not remove {dir_to_remove}")
+
     run_list = configs2cmds(
         configs,
         default_parameters,
