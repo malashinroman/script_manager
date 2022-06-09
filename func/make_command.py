@@ -71,7 +71,7 @@ def make_command2(
 
     cmd = f"python {script_name} "
     if not "output_dir" in param_dict:
-        cmd += f"--output_dir = {output} "
+        cmd += f"--output_dir={output} "
         print(output)
     else:
         print(param_dict["output_dir"])
