@@ -122,7 +122,15 @@ def configs2cmds(
     else:
         final_run_list = run_list
 
-    final_run_list.insert(0, f"sleep {args.sleep}")
+    if "h" in args.sleep:
+        sleep_seconds = int(args.sleep.strip("h")) * 60 * 60
+    elif "m" in args.sleep:
+        sleep_seconds = int(args.sleep.strip("m")) * 60
+    else:
+        sleep_seconds = int(args.sleep)
+    print(f"Going to sleep {sleep_seconds} seconds")
+
+    final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
 
 
