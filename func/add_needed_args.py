@@ -38,6 +38,9 @@ def smart_parse_args(parser):
     param_path = os.path.join(args.output_dir, "run_params.json")
 
     with open(param_path, "w") as fp:
-        json.dump(args.__dict__, fp, indent=4, sort_keys=True)
+        if args.wandb_project_name is not None:
+            json.dump(args._items, fp, indent=4, sort_keys=True)
+        else:
+            json.dump(args.__dict__, fp, indent=4, sort_keys=True)
 
     return args
