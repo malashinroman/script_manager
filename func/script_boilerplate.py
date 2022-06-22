@@ -154,6 +154,7 @@ def do_everything(
     # configs = set_configs()
 
     folder_keys = [
+        os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(script_file)))),
         os.path.basename(os.path.dirname(os.path.dirname(script_file))),
         os.path.basename(os.path.dirname(script_file)),
         os.path.basename(script_file).split(".")[0],
