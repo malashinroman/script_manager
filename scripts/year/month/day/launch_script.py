@@ -22,16 +22,16 @@ extra_folder_keys = []
 
 # default parameteres
 default_parameters = {"imagenet_path": IMAGENET_PATH}
+test_parameters = {"number_of_iterations": 0}
 
 # configs to be exectuted
 configs = []
 config1 = {"number_of_iterations": 1, "tag": "num_1_"}
 
-test_parameters = {"number_of_iterations": 0}
 configs.append([config1, None])
 config2 = {"number_of_iterations": 10, "tag": "num_10_"}
-configs.append([config2, "prev_result"])
 
+configs.append([config2, "prev_result"])
 # RUN everything
 # !normally you don't have to change anything here
 if __name__ == "__main__":

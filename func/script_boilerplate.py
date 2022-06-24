@@ -1,9 +1,10 @@
 import os
 from copy import deepcopy
 from pathlib import Path
+
 from script_manager.func.make_command import make_command2
-from script_manager.func.script_parse_args import get_script_args
 from script_manager.func.run_series_of_experiments import run_async
+from script_manager.func.script_parse_args import get_script_args
 
 
 def update_with_test_dict(full_config, test_dict):
@@ -33,11 +34,45 @@ def update_with_test_dict(full_config, test_dict):
 def get_cwd(args, file_path):
     path = Path(file_path)
     if args.cwd is None:
-        cwd = str(path.parent.parent.parent.parent.parent.absolute())
+        script_manager_found = False
+        c_path = path
+        while not script_manager_found:
+            sm_path = os.path.join(str(c_path), "script_manager")
+            if os.path.exists(sm_path):
+                script_manager_found = True
+                cwd = str(c_path)
+
+            c_path = c_path.parent
+        assert script_manager_found
+        # cwd = str(path.parent.parent.parent.parent.parent.absolute())
     else:
         cwd = args.cwd
     print({"cwd": cwd})
     return cwd
+
+
+def update_dict_from_opt_args(opt_args):
+    ret_d = {}
+    # assert (len(opt_args) % 2 == 0)
+    k = 0
+    current_key = None
+    for el in opt_args:
+        if el[0] == "-":
+            if current_key is not None:
+                ret_d[current_key] = "parameter_without_value"
+
+            current_key = el.strip("-")
+            # assert(current_key is None)
+        else:
+            assert current_key is not None
+            val = el
+            ret_d[current_key] = val
+            current_key = None
+
+    if current_key is not None:
+        ret_d[current_key] = "parameter_without_value"
+
+    return ret_d
 
 
 def configs2cmds(
@@ -56,6 +91,8 @@ def configs2cmds(
 
     # folder_keys, appedix_keys = get_name_keys()
     run_list = []
+    args_update = update_dict_from_opt_args(args.opts[1:])
+
     for data_configuration, output_forward_key in zip(configs, uof):
         configuration_dict = deepcopy(default_parameters)
         configuration_dict.update(data_configuration)
@@ -73,6 +110,7 @@ def configs2cmds(
         else:
             print("WARNING: no wandb logs are enabled")
 
+        configuration_dict.update(args_update)
         cmd0, pref_step_output = make_command2(
             configuration_dict, main_script, folder_keys, appedix_keys
         )
@@ -84,7 +122,15 @@ def configs2cmds(
     else:
         final_run_list = run_list
 
-    final_run_list.insert(0, f"sleep {args.sleep}")
+    if "h" in args.sleep:
+        sleep_seconds = int(args.sleep.strip("h")) * 60 * 60
+    elif "m" in args.sleep:
+        sleep_seconds = int(args.sleep.strip("m")) * 60
+    else:
+        sleep_seconds = int(args.sleep)
+    print(f"Going to sleep {sleep_seconds} seconds")
+
+    final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
 
 
@@ -102,19 +148,34 @@ def do_everything(
     wandb_project_name,
     script_file,
 ):
-
     args = get_script_args()
 
     work_dir = get_cwd(args, script_file)
     # configs = set_configs()
 
     folder_keys = [
+        os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(script_file)))),
         os.path.basename(os.path.dirname(os.path.dirname(script_file))),
         os.path.basename(os.path.dirname(script_file)),
         os.path.basename(script_file).split(".")[0],
     ]
     # extra_folder_keys, appendix_keys = get_name_keys()
     folder_keys += extra_folder_keys
+
+    # if args.kill_concurrent_folders:
+    #     parent_dir = os.path.dirname(args.output_dir)
+    #     concurrent_folders = os.listdir(parent_dir)
+    #     for folder in concurrent_folders:
+    #         dir_to_remove = os.path.join(parent_dir, folder)
+    #         # Dirname has to be specific format with time
+    #         # For safety reasons
+    #
+    #         splits = folder.split('-')
+    #         if len(splits) > 4 and 'T' in splits[-3]:
+    #             shutil.rmtree(dir_to_remove)
+    #     else:
+    #         print(f"WARNING: Improper name, will not remove {dir_to_remove}")
+
     run_list = configs2cmds(
         configs,
         default_parameters,
