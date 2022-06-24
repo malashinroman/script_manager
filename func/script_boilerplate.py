@@ -63,13 +63,13 @@ def configs2cmds(
             if len(output_forward_key) > 0:
                 assert pref_step_output is not None
                 configuration_dict[output_forward_key] = pref_step_output
+        if args.enable_wandb:
+            configuration_dict["wandb_project_name"] = wandb_project_name
         if not args.not_test:
             # test_parameters = get_test_update_dict(configuration_dict)
             # configuration_dict.update(test_parameters)
             update_with_test_dict(configuration_dict, test_dict=test_parameters)
             print("WARNING: test mode is activated")
-        if args.enable_wandb:
-            configuration_dict["wandb_project_name"] = wandb_project_name
         else:
             print("WARNING: no wandb logs are enabled")
 
