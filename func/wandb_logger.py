@@ -49,13 +49,26 @@ def update_args_from_wandb(args):
         return args
 
 
+import torch
+
+
+def filter_dict_for_dump(input):
+    output = {}
+    for key, val in input.items():
+        if type(val) is torch.Tensor:
+            val = val.item()
+        output[key] = val
+
+    return output
+
+
 def write_wandb_scalar(tag, scalar_value=None, global_step=None):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
         if __WANDB_LOG__.use_tensorboard:
             if type(tag) is dict:
-                log_dict = deepcopy(tag)
+                log_dict = deepcopy(filter_dict_for_dump(tag))
                 real_tag = list(log_dict.keys())[0]
                 scalar_value = log_dict[real_tag]
                 if "global_step" in log_dict:
@@ -67,7 +80,7 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None):
 
         if __WANDB_LOG__.use_wandb:
             if type(tag) is dict:
-                log_dict = deepcopy(tag)
+                log_dict = deepcopy(filter_dict_for_dump(tag))
 
                 log_dict["global_step"] = global_step
                 wandb.log(log_dict)
