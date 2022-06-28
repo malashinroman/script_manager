@@ -56,11 +56,13 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None):
         if __WANDB_LOG__.use_tensorboard:
             if type(tag) is dict:
                 log_dict = deepcopy(tag)
-                tag = list(log_dict.keys())[0]
-                scalar_value = log_dict[tag]
+                real_tag = list(log_dict.keys())[0]
+                scalar_value = log_dict[real_tag]
                 if "global_step" in log_dict:
                     global_step = log_dict["global_step"]
-            __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
+                __WANDB_LOG__._writer.add_scalar(real_tag, scalar_value, global_step)
+            else:
+                __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
             logged = 1
 
         if __WANDB_LOG__.use_wandb:
@@ -73,10 +75,10 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None):
                 wandb.log({tag: scalar_value, "global_step": global_step})
             logged = 1
 
-    if not logged:
-        print(
-            "WARNING: write_wandb_scalar has no effect, because logger is not initialized"
-        )
+        if not logged:
+            print(
+                "WARNING: write_wandb_scalar has no effect, because logger is not initialized"
+            )
 
 
 # def write_wandb_video(tag, frames, global_step=None):
