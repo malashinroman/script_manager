@@ -3,10 +3,10 @@ import sys
 
 sys.path.append(".")
 
+from local_config import IMAGENET_PATH
+
 from script_manager.func.script_boilerplate import do_everything
 from script_manager.func.script_parse_args import get_script_args
-
-from local_config import IMAGENET_PATH
 
 args = get_script_args()
 
@@ -32,6 +32,7 @@ configs.append([config1, None])
 config2 = {"number_of_iterations": 10, "tag": "num_10_"}
 
 configs.append([config2, "prev_result"])
+# configs.append([config2,
 # RUN everything
 # !normally you don't have to change anything here
 if __name__ == "__main__":

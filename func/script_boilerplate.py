@@ -78,7 +78,7 @@ def update_dict_from_opt_args(opt_args):
 def configs2cmds(
     full_configs,
     default_parameters,
-    main_script,
+    main_script_container,
     args,
     folder_keys,
     appedix_keys,
@@ -93,13 +93,20 @@ def configs2cmds(
     run_list = []
     args_update = update_dict_from_opt_args(args.opts[1:])
 
-    for data_configuration, output_forward_key in zip(configs, uof):
+    for conf_index, (data_configuration, output_forward_key) in enumerate(
+        zip(configs, uof)
+    ):
         configuration_dict = deepcopy(default_parameters)
         configuration_dict.update(data_configuration)
         if output_forward_key is not None:
             if len(output_forward_key) > 0:
                 assert pref_step_output is not None
-                configuration_dict[output_forward_key] = pref_step_output
+                if type(output_forward_key) is dict:
+                    key = list(output_forward_key.keys())[0]
+                    path_format = list(output_forward_key.values())[0]
+                    configuration_dict[key] = path_format.format(pref_step_output)
+                else:
+                    configuration_dict[output_forward_key] = pref_step_output
         if args.enable_wandb:
             configuration_dict["wandb_project_name"] = wandb_project_name
         if not args.not_test:
@@ -111,6 +118,11 @@ def configs2cmds(
             print("WARNING: no wandb logs are enabled")
 
         configuration_dict.update(args_update)
+        if type(main_script_container) is list:
+            main_script = main_script_container[conf_index]
+        else:
+            main_script = main_script_container
+
         cmd0, pref_step_output = make_command2(
             configuration_dict, main_script, folder_keys, appedix_keys
         )
@@ -154,7 +166,9 @@ def do_everything(
     # configs = set_configs()
 
     folder_keys = [
-        os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(script_file)))),
+        os.path.basename(
+            os.path.dirname(os.path.dirname(os.path.dirname(script_file)))
+        ),
         os.path.basename(os.path.dirname(os.path.dirname(script_file))),
         os.path.basename(os.path.dirname(script_file)),
         os.path.basename(script_file).split(".")[0],
