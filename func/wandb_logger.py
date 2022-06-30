@@ -62,9 +62,7 @@ def filter_dict_for_dump(input):
     return output
 
 
-def write_wandb_scalar(
-    tag, scalar_value=None, global_step=None, commit="stop_the_madness"
-):
+def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
