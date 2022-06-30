@@ -94,6 +94,20 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
             )
 
 
+def write_wandb_dict(dict, commit=None):
+    global __WANDB_LOG__
+    logged = 0
+    if __WANDB_LOG__ is not None:
+        if __WANDB_LOG__.use_wandb:
+            wandb.log(dict, commit=commit)
+            logged = 1
+
+        if not logged:
+            print(
+                "WARNING: write_wandb_scalar has no effect, because logger is not initialized"
+            )
+
+
 # def write_wandb_video(tag, frames, global_step=None):
 #     global __WANDB_LOG__
 #     logged = 0
