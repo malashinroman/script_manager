@@ -84,6 +84,7 @@ def configs2cmds(
     appedix_keys,
     test_parameters,
     wandb_project_name,
+    work_dir,
 ):
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
@@ -124,7 +125,11 @@ def configs2cmds(
             main_script = main_script_container
 
         cmd0, pref_step_output = make_command2(
-            configuration_dict, main_script, folder_keys, appedix_keys
+            configuration_dict,
+            main_script,
+            folder_keys,
+            appedix_keys,
+            work_dir=work_dir,
         )
         # pref_step_output = output0
         run_list.append(cmd0)
@@ -199,5 +204,6 @@ def do_everything(
         appedix_keys=appendix_keys,
         test_parameters=test_parameters,
         wandb_project_name=wandb_project_name,
+        work_dir=work_dir,
     )
     run_cmds(run_list, work_dir, args)

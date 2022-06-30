@@ -62,7 +62,9 @@ def filter_dict_for_dump(input):
     return output
 
 
-def write_wandb_scalar(tag, scalar_value=None, global_step=None):
+def write_wandb_scalar(
+    tag, scalar_value=None, global_step=None, commit="stop_the_madness"
+):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
@@ -83,9 +85,9 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None):
                 log_dict = deepcopy(filter_dict_for_dump(tag))
 
                 log_dict["global_step"] = global_step
-                wandb.log(log_dict)
+                wandb.log(log_dict, commit=commit)
             else:
-                wandb.log({tag: scalar_value, "global_step": global_step})
+                wandb.log({tag: scalar_value}, commit=commit)
             logged = 1
 
         if not logged:

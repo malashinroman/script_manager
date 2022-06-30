@@ -43,7 +43,11 @@ def path_from_keylist(dict, keys):
 
 
 def make_command2(
-    param_dict: Dict[str, str], script_name="main.py", folder_keys=[], appendix_keys=[]
+    param_dict: Dict[str, str],
+    script_name="main.py",
+    folder_keys=[],
+    appendix_keys=[],
+    work_dir=None,
 ):
     """
     Create text represenation of the command to be launhced with all the necessary non-default parameters
@@ -65,7 +69,7 @@ def make_command2(
     )
     path = path_from_keylist(param_dict, folder_keys)
 
-    output = os.path.join(path, appendix + time)
+    output = os.path.join(work_dir, path, appendix + time)
     if not os.path.exists(output):
         os.makedirs(output)
 
