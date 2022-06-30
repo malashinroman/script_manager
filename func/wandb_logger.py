@@ -15,7 +15,7 @@ class WandbLogger(object):
     def __init__(self, args, wandb_entity):
         super().__init__()
         self._args = args
-        if args.tensorboard_folder is not None:
+        if args.tensorboard_folder is not None and len(args.tensorboard_folder) > 0:
             self.use_tensorboard = True
             log_dir = osp.join(self._args.output_dir, "tensorboard")
             if self.__dict__.get("_writer") is None or self._writer is None:
@@ -80,10 +80,10 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
 
         if __WANDB_LOG__.use_wandb:
             if type(tag) is dict:
-                log_dict = deepcopy(filter_dict_for_dump(tag))
-
-                log_dict["global_step"] = global_step
-                wandb.log(log_dict, commit=commit)
+                # log_dict = deepcopy(filter_dict_for_dump(tag))
+                #
+                # log_dict["global_step"] = global_step
+                wandb.log(tag, commit=commit)
             else:
                 wandb.log({tag: scalar_value}, commit=commit)
             logged = 1

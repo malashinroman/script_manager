@@ -57,7 +57,7 @@ def update_dict_from_opt_args(opt_args):
     k = 0
     current_key = None
     for el in opt_args:
-        if el[0] == "-":
+        if not (len(el)) < 1 and el[0] == "-":
             if current_key is not None:
                 ret_d[current_key] = "parameter_without_value"
 
