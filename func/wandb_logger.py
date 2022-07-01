@@ -2,6 +2,7 @@
 import os.path as osp
 from copy import deepcopy
 
+import matplotlib.pyplot as plt
 import wandb
 from local_config import WANDB_LOGIN
 
@@ -106,6 +107,19 @@ def write_wandb_dict(dict, commit=None):
             print(
                 "WARNING: write_wandb_scalar has no effect, because logger is not initialized"
             )
+
+
+def write_wandb_bar(
+    tag, bars_val, indexes_label="classifier index", height_label="calls", commit=None
+):
+    plt.figure()
+    plt.bar(list(range(len(bars_val))), [bars_val[i] for i in range(len(bars_val))])
+    plt.xlabel(indexes_label)
+    plt.ylabel(height_label)
+    # fig.set_size_inches(6, 3)
+    # wandb.log({'rand'})
+    write_wandb_dict({tag: plt}, commit=commit)
+    plt.close()
 
 
 # def write_wandb_video(tag, frames, global_step=None):
