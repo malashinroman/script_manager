@@ -1,13 +1,15 @@
-import threading
-import time
-import random
 import subprocess
+import time
 
-def run_async(run_list=[], parallel_num=2, cwd='.'):
+
+def run_async(run_list=[], parallel_num=2, cwd="."):
     if parallel_num == 1:
         for cmd in run_list:
-            lol = cmd.split(" ")
+            print(f"cmd:{cmd}")
+
+            """launch the process"""
             subprocess.call(cmd.split(" "), cwd=cwd)
+            # subprocess.Popen(cmd.split(" "),shell=True)
         return
 
     progresses = []
@@ -31,7 +33,7 @@ def run_async(run_list=[], parallel_num=2, cwd='.'):
         time.sleep(10)
 
     print("All Threads are queued, let's see when they finish!")
-    
+
     for p in progresses:
         p.wait()
     print("Everything finished!")
