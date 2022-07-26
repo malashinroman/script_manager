@@ -33,6 +33,7 @@ def update_with_test_dict(full_config, test_dict):
 
 def get_cwd(args, file_path):
     path = Path(file_path)
+    cwd = None
     if args.cwd is None:
         script_manager_found = False
         c_path = path
@@ -115,8 +116,8 @@ def configs2cmds(
             # configuration_dict.update(test_parameters)
             update_with_test_dict(configuration_dict, test_dict=test_parameters)
             print("WARNING: test mode is activated")
-        else:
-            print("WARNING: no wandb logs are enabled")
+        # else:
+        #     print("WARNING: no wandb logs are enabled")
 
         configuration_dict.update(args_update)
         if type(main_script_container) is list:
@@ -207,3 +208,5 @@ def do_everything(
         work_dir=work_dir,
     )
     run_cmds(run_list, work_dir, args)
+
+    return run_list
