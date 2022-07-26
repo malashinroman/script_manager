@@ -1,7 +1,6 @@
 import json
 import os
 import pprint
-import shutil
 
 
 def str2intlist(v):
