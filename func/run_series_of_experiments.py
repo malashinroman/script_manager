@@ -3,6 +3,13 @@ import time
 
 
 def run_async(run_list=[], parallel_num=2, cwd="."):
+    """
+    Run a list of commands in parallel.
+    param run_list     : list of commands to be run
+    param parallel_num : number of commands to be run in parallel
+    param cwd          : current working directory
+    return             :
+    """
     if parallel_num == 1:
         for cmd in run_list:
             print(f"cmd:{cmd}")

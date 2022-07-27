@@ -1,3 +1,5 @@
+"""Example of the master script that uses the script manager"""
+
 import os
 import sys
 
@@ -32,7 +34,7 @@ configs.append([config1, None])
 config2 = {"number_of_iterations": 10, "tag": "num_10_"}
 
 configs.append([config2, "prev_result"])
-# configs.append([config2,
+
 # RUN everything
 # !normally you don't have to change anything here
 if __name__ == "__main__":

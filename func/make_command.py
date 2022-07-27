@@ -1,5 +1,3 @@
-# import subprocess
-
 import datetime
 import os
 from typing import Dict
@@ -54,9 +52,9 @@ def make_command2(
     By default adds '--output' argument with the values according
     to the state of global appendix_keys, folder_keys, which are set externally
 
-    :param param_dict: dictionary with scripts argument names and values
-    :param script_name: name of the script to be launched
-    :return: tuple - (i) text representation of the command, (ii) path to the output folder
+    : param param_dict  : dictionary with scripts argument names and values
+    : param script_name : name of the script to be launched
+    : return            : tuple - (i) text representation of the command, (ii) path to the output folder
     """
 
     # global folder_keys

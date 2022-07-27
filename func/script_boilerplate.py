@@ -1,3 +1,5 @@
+"""Typical functionality of the master script"""
+
 import os
 from copy import deepcopy
 from pathlib import Path
@@ -21,17 +23,11 @@ def update_with_test_dict(full_config, test_dict):
     return full_config
 
 
-# def get_name_keys():
-#     # this parameters will be logged as appendix of the directory name
-#     folder_keys = []
-#
-#     # this parameters will be logged as as subfolders in directory path
-#     appendix_keys = ["tag"]
-#
-#     return folder_keys, appendix_keys
-
-
 def get_cwd(args, file_path):
+    """Get the current working directory
+    determining where to run the experiments
+    By default assumes that the directory contains the script_manager"""
+
     path = Path(file_path)
     cwd = None
     if args.cwd is None:
@@ -54,8 +50,6 @@ def get_cwd(args, file_path):
 
 def update_dict_from_opt_args(opt_args):
     ret_d = {}
-    # assert (len(opt_args) % 2 == 0)
-    k = 0
     current_key = None
     for el in opt_args:
         if not (len(el)) < 1 and el[0] == "-":
@@ -63,7 +57,6 @@ def update_dict_from_opt_args(opt_args):
                 ret_d[current_key] = "parameter_without_value"
 
             current_key = el.strip("-")
-            # assert(current_key is None)
         else:
             assert current_key is not None
             val = el
@@ -87,6 +80,19 @@ def configs2cmds(
     wandb_project_name,
     work_dir,
 ):
+    """
+    Convert the configs to commands
+    Args:
+    full_configs          : list of (dict, path), each dict is a config, path tunnels output_dir (use None by default)"
+    default_parameters    : dict of default parameters
+    main_script_container : str, path to the main script
+    args                  : argparse.Namespace, arguments passed to the master script
+    folder_keys           : list of str, keys to use for the folder name
+    appedix_keys          : list of str, keys to use for the appendix name
+    test_parameters       : dict of parameters to use for testing
+    wandb_project_name    : str, name of the wandb project
+    work_dir              : str, path where to run the experiments
+    """
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
     assert len(uof) == len(configs)
@@ -132,7 +138,6 @@ def configs2cmds(
             appedix_keys,
             work_dir=work_dir,
         )
-        # pref_step_output = output0
         run_list.append(cmd0)
 
     if args.configs2run is not None:
@@ -166,6 +171,18 @@ def do_everything(
     wandb_project_name,
     script_file,
 ):
+    """Function that will execute experiments in parallel or sequentially
+    Args:
+    default_parameters    : dict of default parameters
+    configs               : list of (dict, path), each dict is a config, path tunnels output_dir (use None by default)"
+    extra_folder_keys     : list of str, keys to use for the folder name
+    appendix_keys         : list of str, keys to use for the appendix name
+    main_script           : str, path to the main script
+    test_parameters       : dict of parameters to use for testing
+    wandb_project_name    : str, name of the wandb project
+    script_file           : str, path to the script file
+    """
+
     args = get_script_args()
 
     work_dir = get_cwd(args, script_file)

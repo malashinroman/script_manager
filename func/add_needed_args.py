@@ -12,6 +12,9 @@ def str2list(v):
 
 
 def append_needed_args(parser):
+    """
+    Append the needed arguments to the parser.
+    """
     default_args = parser.add_argument_group("default_args")
     default_args.add_argument("--tag", default="")
     default_args.add_argument("--output_dir", type=str, default="")
@@ -26,6 +29,12 @@ def dump_args_as_default_paraemeters(args):
 
 
 def smart_parse_args(parser):
+    """
+    Function to call instead of parser.parse_args().
+    append needed args,
+    prepares wandb_project
+    parses args
+    """
     append_needed_args(parser)
     args = parser.parse_args()
     if args.wandb_project_name is not None:
