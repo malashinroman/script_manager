@@ -70,11 +70,15 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
         if __WANDB_LOG__.use_tensorboard:
             if type(tag) is dict:
                 log_dict = deepcopy(filter_dict_for_dump(tag))
-                real_tag = list(log_dict.keys())[0]
-                scalar_value = log_dict[real_tag]
                 if "global_step" in log_dict:
                     global_step = log_dict["global_step"]
-                __WANDB_LOG__._writer.add_scalar(real_tag, scalar_value, global_step)
+                for key, val in log_dict.items():
+                    __WANDB_LOG__._writer.add_scalar(key, val, global_step=global_step)
+
+                # real_tag = list(log_dict.keys())[0]
+                # scalar_value = log_dict[real_tag]
+                # __WANDB_LOG__._writer.add_scalar(real_tag, scalar_value, global_step)
+
             else:
                 __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
             logged = 1
@@ -112,32 +116,24 @@ def write_wandb_dict(dict, commit=None):
 def write_wandb_bar(
     tag, bars_val, indexes_label="classifier index", height_label="calls", commit=None
 ):
-    plt.figure()
-    plt.bar(list(range(len(bars_val))), [bars_val[i] for i in range(len(bars_val))])
-    plt.xlabel(indexes_label)
-    plt.ylabel(height_label)
-    # fig.set_size_inches(6, 3)
-    # wandb.log({'rand'})
-    write_wandb_dict({tag: plt}, commit=commit)
-    plt.close()
-
-
-# def write_wandb_video(tag, frames, global_step=None):
-#     global __WANDB_LOG__
-#     logged = 0
-#     if __WANDB_LOG__.use_tensorboard:
-#         __WANDB_LOG__._writer.add_scalar(tag, scalar_value, global_step)
-#         logged = 1
-#
-#     if __WANDB_LOG__.use_wandb:
-#         wandb.log({tag: scalar_value, 'global_step': global_step})
-#         logged = 1
-#
-#     if not logged:
-#         print("WARNING: write_wandb_scalar has no effect, because logger is not initialized")
+    if __WANDB_LOG__ is not None:
+        if __WANDB_LOG__.use_wandb:
+            plt.figure()
+            plt.bar(
+                list(range(len(bars_val))), [bars_val[i] for i in range(len(bars_val))]
+            )
+            plt.xlabel(indexes_label)
+            plt.ylabel(height_label)
+            # fig.set_size_inches(6, 3)
+            # wandb.log({'rand'})
+            write_wandb_dict({tag: plt}, commit=commit)
+            plt.close()
 
 
 def prepare_wandb(args):
     init_wandb_logger(args, WANDB_LOGIN)
-    updated_args = update_args_from_wandb(args)
-    return updated_args
+    if args.wandb_project_name is not None:
+        updated_args = update_args_from_wandb(args)
+        return updated_args
+    else:
+        return args

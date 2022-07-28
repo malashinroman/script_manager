@@ -37,10 +37,9 @@ def smart_parse_args(parser):
     """
     append_needed_args(parser)
     args = parser.parse_args()
-    if args.wandb_project_name is not None:
-        from script_manager.func.wandb_logger import prepare_wandb
+    from script_manager.func.wandb_logger import prepare_wandb
 
-        args = prepare_wandb(args)
+    args = prepare_wandb(args)
 
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
