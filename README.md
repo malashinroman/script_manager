@@ -11,4 +11,3 @@ Consider side project.
 Now you have control over the side project from script.
 Results will be saved under <project_root>/train_results/script_date.
 
-
