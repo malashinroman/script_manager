@@ -2,7 +2,8 @@
 Boilerplate code for managing scripts and logs with weights and biases
 
 Consider side project.
-1. Add script_manager as submodule (script_manager has to appear in the root of the project).
+1. Add script_manager as submodule (script_manager has to appear in the root of the project)
+         git submodule add https://github.com/malashinroman/script_manager
 2. Create ./scripts folder in the project root and copy script_manager/year/month/day/launch_script.py there. This is script to substitute bash scripts for providing parameters
 3. Find where the project implement ArgumentParser and substitute parse_args() with smart_parse_args().
 4. Find where the project saves data and make sure that from now it will save it to args.output_dir().
