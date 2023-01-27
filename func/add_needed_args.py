@@ -22,7 +22,7 @@ def append_needed_args(parser):
     default_args.add_argument("--tensorboard_folder", type=str, default="tensorboard")
     default_args.add_argument("--use_tensorboard", type=int, default=0)
     default_args.add_argument("--kill_concurrent_folders", type=int, default=0)
-
+    default_args.add_argument("--random_seed", type=int, default=None)
 
 def dump_args_as_default_paraemeters(args):
     pprint.pprint(args.__dict__)
@@ -40,6 +40,15 @@ def smart_parse_args(parser):
     from script_manager.func.wandb_logger import prepare_wandb
 
     args = prepare_wandb(args)
+
+    if args.random_seed is not None:
+        import numpy as np
+        import torch
+        import random
+        np.random.seed(args.random_seed)
+        torch.manual_seed(args.random_seed)
+        torch.cuda.manual_seed_all(args.random_seed)
+        random.seed(args.random_seed)
 
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
