@@ -50,19 +50,25 @@ def get_cwd(args, file_path):
     print({"cwd": cwd})
     return cwd
 
+def get_key_val_from_key(key_word):
+    val = "parameter_without_value"
+    key = key_word
+    if '=' in key_word:
+        kv_list = key_word.split('=')
+        key = kv_list[0]
+        val = kv_list[1]
+    return key,val
 
 def update_dict_from_opt_args(opt_args):
     ret_d = {}
     # assert (len(opt_args) % 2 == 0)
-    k = 0
     current_key = None
     for el in opt_args:
         if not (len(el)) < 1 and el[0] == "-":
             if current_key is not None:
-                ret_d[current_key] = "parameter_without_value"
-
+                key,val =get_key_val_from_key(current_key)
+                ret_d[key]=val
             current_key = el.strip("-")
-            # assert(current_key is None)
         else:
             assert current_key is not None
             val = el
@@ -70,7 +76,8 @@ def update_dict_from_opt_args(opt_args):
             current_key = None
 
     if current_key is not None:
-        ret_d[current_key] = "parameter_without_value"
+        key,val =get_key_val_from_key(current_key)
+        ret_d[key] = val
 
     return ret_d
 
@@ -145,7 +152,7 @@ def configs2cmds(
         sleep_seconds = int(args.sleep.strip("m")) * 60
     else:
         sleep_seconds = int(args.sleep)
-    print(f"Going to sleep {sleep_seconds} seconds")
+    print(f"Going to sleep  seconds")
 
     final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
@@ -206,4 +213,6 @@ def do_everything(
         wandb_project_name=wandb_project_name,
         work_dir=work_dir,
     )
+    # print(run_list)
+    # __import__('pudb').set_trace()
     run_cmds(run_list, work_dir, args)
