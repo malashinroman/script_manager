@@ -234,5 +234,4 @@ def do_everything(
         work_dir=work_dir,
     )
     # print(run_list)
-    # __import__('pudb').set_trace()
     run_cmds(run_list, work_dir, args)
