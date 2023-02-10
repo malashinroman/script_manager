@@ -42,6 +42,7 @@ def smart_parse_args(parser):
     args = prepare_wandb(args)
 
     if args.random_seed is not None:
+        # __import__('pudb').set_trace()
         import numpy as np
         import torch
         import random
@@ -49,6 +50,7 @@ def smart_parse_args(parser):
         torch.manual_seed(args.random_seed)
         torch.cuda.manual_seed_all(args.random_seed)
         random.seed(args.random_seed)
+        torch.use_deterministic_algorithms(True)
 
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
