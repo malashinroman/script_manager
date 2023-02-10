@@ -51,6 +51,7 @@ def smart_parse_args(parser):
         torch.cuda.manual_seed_all(args.random_seed)
         random.seed(args.random_seed)
         torch.use_deterministic_algorithms(True)
+        torch.backends.cudnn.benchmark = False
 
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
