@@ -42,7 +42,6 @@ def smart_parse_args(parser):
     args = prepare_wandb(args)
 
     if args.random_seed is not None:
-        # __import__('pudb').set_trace()
         import numpy as np
         import torch
         import random
