@@ -46,9 +46,10 @@ def smart_parse_args(parser):
         import torch
         import random
         np.random.seed(args.random_seed)
-        torch.manual_seed(args.random_seed)
-        torch.cuda.manual_seed_all(args.random_seed)
         random.seed(args.random_seed)
+        torch.manual_seed(args.random_seed)
+        torch.cuda.manual_seed(args.random_seed)
+        torch.cuda.manual_seed_all(args.random_seed)
         torch.use_deterministic_algorithms(True)
         torch.backends.cudnn.benchmark = False
 
