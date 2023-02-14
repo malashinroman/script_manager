@@ -36,9 +36,10 @@ def set_random_seed(random_seed):
         torch.manual_seed(random_seed)
         torch.cuda.manual_seed(random_seed)
         torch.cuda.manual_seed_all(random_seed)
-        torch.use_deterministic_algorithms(True)
         torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.deterministic = True
+        # FIXME: causes error, when adding CUBLAS_... env variable
+        # torch.use_deterministic_algorithms(True)
+        # torch.backends.cudnn.deterministic = True
 
 def smart_parse_args(parser):
     """
