@@ -27,6 +27,18 @@ def append_needed_args(parser):
 def dump_args_as_default_paraemeters(args):
     pprint.pprint(args.__dict__)
 
+def set_random_seed(random_seed):
+        import numpy as np
+        import torch
+        import random
+        np.random.seed(random_seed)
+        random.seed(random_seed)
+        torch.manual_seed(random_seed)
+        torch.cuda.manual_seed(random_seed)
+        torch.cuda.manual_seed_all(random_seed)
+        torch.use_deterministic_algorithms(True)
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
 
 def smart_parse_args(parser):
     """
@@ -42,16 +54,7 @@ def smart_parse_args(parser):
     args = prepare_wandb(args)
 
     if args.random_seed is not None:
-        import numpy as np
-        import torch
-        import random
-        np.random.seed(args.random_seed)
-        random.seed(args.random_seed)
-        torch.manual_seed(args.random_seed)
-        torch.cuda.manual_seed(args.random_seed)
-        torch.cuda.manual_seed_all(args.random_seed)
-        torch.use_deterministic_algorithms(True)
-        torch.backends.cudnn.benchmark = False
+        set_random_seed(args.random_seed)
 
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
