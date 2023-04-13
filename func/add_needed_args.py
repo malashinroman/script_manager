@@ -62,7 +62,8 @@ def smart_parse_args(parser):
 
     with open(param_path, "w") as fp:
         if args.wandb_project_name is not None:
-            json.dump(args._items, fp, indent=4, sort_keys=True)
+            json.dump(args.__dict__, fp, indent=4, sort_keys=True)
+            # json.dump(args._items, fp, indent=4, sort_keys=True)
         else:
             json.dump(args.__dict__, fp, indent=4, sort_keys=True)
 

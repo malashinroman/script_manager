@@ -5,7 +5,7 @@ from typing import Dict
 base_params = None
 
 
-def dict_to_string(dictionary):
+def dict_to_string(dictionary: dict) -> str:
     string = ""
     for (k, v) in dictionary.items():
         if k == "load_checkpoint_DM":
@@ -15,17 +15,17 @@ def dict_to_string(dictionary):
         if type(v) is not str:
             v = repr(v)
         if k != "tag":
-            string += "{}_{}_".format(k, v).replace(".", "_")
+            string += f"{k}_{v}_".replace(".", "_")
         else:
-            string += "{}_".format(v).replace(".", "_")
+            string += f"{v}_".replace(".", "_")
     return string
 
 
-def path_from_keylist(dict, keys):
+def path_from_keylist(dictionary: dict, keys: list) -> str:
     path = "train_results"
     for k in keys:
-        if k in dict:
-            v = dict[k]
+        if k in dictionary:
+            v = dictionary[k]
         else:
             v = k
         if type(v) is not str:
@@ -42,10 +42,10 @@ def path_from_keylist(dict, keys):
 
 def make_command2(
     param_dict: Dict[str, str],
-    script_name="main.py",
-    folder_keys=[],
-    appendix_keys=[],
-    work_dir=None,
+    script_name: str | list[str] = "",
+    folder_keys: list[str] = [],
+    appendix_keys: list[str] = [],
+    work_dir: str = "",
 ):
     """
     Create text represenation of the command to be launhced with all the necessary non-default parameters
@@ -71,13 +71,29 @@ def make_command2(
     if not os.path.exists(output):
         os.makedirs(output)
 
-    cmd = f"python {script_name} "
+    cmd = ""
+    if isinstance(script_name, str):
+        if len(script_name.split(" ")[0]) > 0:
+            fist_c = script_name.split(" ")
+            if fist_c[0].endswith(".py"):
+                cmd = f"python "
+            elif fist_c == 'torchrun':
+                pass
+                # add ports to enable multiple instances for
+                # multiple ports
+
+    cmd += f"{script_name} "
     if not "output_dir" in param_dict:
         cmd += f"--output_dir={output} "
         print(output)
     else:
         print(param_dict["output_dir"])
         assert not os.path.exists(param_dict["output_dir"])
+
+    if "__script_output_arg__" in param_dict:
+        script_arg = param_dict["__script_output_arg__"]
+        cmd += f"--{script_arg}={output} "
+        del param_dict["__script_output_arg__"]
 
     for key, val in param_dict.items():
         if val != "parameter_without_value":

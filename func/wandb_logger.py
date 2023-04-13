@@ -45,7 +45,10 @@ def init_wandb_logger(args, wandb_entity):
 
 def update_args_from_wandb(args):
     if args.wandb_project_name is not None:
-        return wandb.config
+        # FIXME: need to check if args will update for sweeps
+        wandb.config.update(args)
+        return args
+        # return wandb.config
     else:
         return args
 
