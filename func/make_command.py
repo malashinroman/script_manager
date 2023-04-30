@@ -97,7 +97,10 @@ def make_command2(
 
     for key, val in param_dict.items():
         if val != "parameter_without_value":
-            cmd += f"--{key}={val} "
+            if not isinstance(val,str) or " " not in val:
+                cmd += f"--{key}={val} "
+            else:
+                cmd += f"--{key} {val} "
         else:
             cmd += f"--{key} "
 
