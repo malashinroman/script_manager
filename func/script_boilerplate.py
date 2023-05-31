@@ -179,6 +179,7 @@ def do_everything(
     test_parameters,
     wandb_project_name,
     script_file,
+    args = None
 ):
     """Function that will execute experiments in parallel or sequentially
     Args:
@@ -192,7 +193,8 @@ def do_everything(
     script_file           : str, path to the script file
     """
 
-    args = get_script_args()
+    if args is None:
+        args = get_script_args()
 
     work_dir = get_cwd(args, script_file)
     # configs = set_configs()

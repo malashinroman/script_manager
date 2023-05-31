@@ -8,8 +8,7 @@ def str2intlist(v):
 def str2list(v):
     return [str(x.strip()) for x in v.strip()[1:-1].split(",")]
 
-
-def get_script_args():
+def create_parser():
     parser = argparse.ArgumentParser(description="TargetRecogniton")
     parser.add_argument(
         "--not_test",
@@ -41,5 +40,9 @@ def get_script_args():
         nargs=argparse.REMAINDER,
         help="modify config options using the command-line",
     )
+    return parser
+
+def get_script_args():
+    parser = create_parser()
     args = parser.parse_args()
     return args
