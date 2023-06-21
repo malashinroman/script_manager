@@ -71,7 +71,6 @@ def smart_parse_args(parser):
     if args.random_seed is not None:
         set_random_seed(args.random_seed)
 
-    __import__('pudb').set_trace()
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
 
