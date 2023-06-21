@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import PosixPath
 import pprint
 
 
@@ -41,6 +42,19 @@ def set_random_seed(random_seed):
         # torch.use_deterministic_algorithms(True)
         # torch.backends.cudnn.deterministic = True
 
+
+def convert_args_for_json(args):
+    args_dict = args.__dict__
+
+    json_dict = {}
+    for k,v in args_dict.items():
+        if isinstance(v, PosixPath):
+            v_save = str(v)
+        else:
+            v_save = v
+        json_dict[k] = v_save
+    return json_dict
+
 def smart_parse_args(parser):
     """
     Function to call instead of parser.parse_args().
@@ -57,14 +71,12 @@ def smart_parse_args(parser):
     if args.random_seed is not None:
         set_random_seed(args.random_seed)
 
+    __import__('pudb').set_trace()
     os.makedirs(args.output_dir, exist_ok=True)
     param_path = os.path.join(args.output_dir, "run_params.json")
 
     with open(param_path, "w") as fp:
-        if args.wandb_project_name is not None:
-            json.dump(args.__dict__, fp, indent=4, sort_keys=True)
-            # json.dump(args._items, fp, indent=4, sort_keys=True)
-        else:
-            json.dump(args.__dict__, fp, indent=4, sort_keys=True)
+        json_dict = convert_args_for_json(args)
+        json.dump(json_dict, fp, indent=4, sort_keys=True)
 
     return args
