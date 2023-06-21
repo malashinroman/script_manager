@@ -3,7 +3,6 @@ import os.path as osp
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
-import wandb
 from local_config import WANDB_LOGIN
 
 # from torch.utils.tensorboard import SummaryWriter
@@ -29,6 +28,7 @@ class WandbLogger(object):
             self.use_tensorboard = False
 
         if args.wandb_project_name is not None:
+            import wandb
             self.use_wandb = True
             wandb.init(
                 project=args.wandb_project_name, entity=wandb_entity, config=args
