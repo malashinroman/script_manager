@@ -10,6 +10,7 @@ from tensorboardX.writer import SummaryWriter
 
 __WANDB_LOG__ = None
 
+import wandb
 
 class WandbLogger(object):
     def __init__(self, args, wandb_entity):
@@ -28,7 +29,6 @@ class WandbLogger(object):
             self.use_tensorboard = False
 
         if args.wandb_project_name is not None:
-            import wandb
             self.use_wandb = True
             wandb.init(
                 project=args.wandb_project_name, entity=wandb_entity, config=args
