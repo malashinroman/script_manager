@@ -1,6 +1,7 @@
 import datetime
 import os
 from typing import Dict
+from pathlib import Path
 
 base_params = None
 
@@ -15,9 +16,9 @@ def dict_to_string(dictionary: dict) -> str:
         if type(v) is not str:
             v = repr(v)
         if k != "tag":
-            string += f"{k}_{v}_".replace(".", "_")
+            string += f"{k}_{v}_".replace(".", "_").replace("'", "-")
         else:
-            string += f"{v}_".replace(".", "_")
+            string += f"{v}_".replace(".", "_").replace("'", "-")
     return string
 
 
@@ -39,6 +40,23 @@ def path_from_keylist(dictionary: dict, keys: list) -> str:
         path = os.path.join(path, folder)
     return path
 
+def increment_path(path, exist_ok=False, sep='', mkdir=False):
+    # Increment file or directory path, i.e. runs/exp --> runs/exp{sep}2, runs/exp{sep}3, ... etc.
+    path = Path(path)  # os-agnostic
+    if path.exists() and not exist_ok:
+        path, suffix = (path.with_suffix(''), path.suffix) if path.is_file() else (path, '')
+
+        # Method 1
+        for n in range(2, 9999):
+            p = f'{path}{sep}{n:03d}{suffix}'  # increment path
+            if not os.path.exists(p):  #
+                break
+        path = Path(p)
+
+    if mkdir:
+        path.mkdir(parents=True, exist_ok=True)  # make directory
+
+    return path
 
 def make_command2(
     param_dict: Dict[str, str],
@@ -67,7 +85,12 @@ def make_command2(
     )
     path = path_from_keylist(param_dict, folder_keys)
 
-    output = os.path.join(work_dir, path, appendix + time)
+    # time labeling is clumsy
+    # output = os.path.join(work_dir, path, appendix + time)
+    output = os.path.join(work_dir, path, appendix)
+    output = str(increment_path(output))
+
+
     if not os.path.exists(output):
         os.makedirs(output)
 
