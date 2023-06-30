@@ -113,6 +113,11 @@ def configs2cmds(
     for conf_index, (data_configuration, output_forward_key) in enumerate(
         zip(configs, uof)
     ):
+        if isinstance(data_configuration, str):
+            # this is direct command
+            # TODO: add support to str instead of [str, None]
+            run_list.append(data_configuration)
+            continue
         configuration_dict = deepcopy(default_parameters)
         configuration_dict.update(data_configuration)
         if output_forward_key is not None:
