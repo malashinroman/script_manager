@@ -71,11 +71,14 @@ def smart_parse_args(parser):
     if args.random_seed is not None:
         set_random_seed(args.random_seed)
 
-    os.makedirs(args.output_dir, exist_ok=True)
-    param_path = os.path.join(args.output_dir, "run_params.json")
+    # create output dir if specified
+    # it may not be specified if we don't use do_everything
+    if len(args.output_dir) > 0:
+        os.makedirs(args.output_dir, exist_ok=True)
+        param_path = os.path.join(args.output_dir, "run_params.json")
 
-    with open(param_path, "w") as fp:
-        json_dict = convert_args_for_json(args)
-        json.dump(json_dict, fp, indent=4, sort_keys=True)
+        with open(param_path, "w") as fp:
+            json_dict = convert_args_for_json(args)
+            json.dump(json_dict, fp, indent=4, sort_keys=True)
 
     return args
