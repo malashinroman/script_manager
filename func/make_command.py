@@ -111,7 +111,7 @@ def make_command2(
         print(output)
     else:
         print(param_dict["output_dir"])
-        assert not os.path.exists(param_dict["output_dir"])
+        assert os.path.exists(param_dict["output_dir"]), param_dict["output_dir"]
 
     if "__script_output_arg__" in param_dict:
         script_arg = param_dict["__script_output_arg__"]

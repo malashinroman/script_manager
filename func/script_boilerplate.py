@@ -1,6 +1,7 @@
 """Typical functionality of the master script"""
 
 import os
+import time
 from copy import deepcopy
 from pathlib import Path
 
@@ -110,19 +111,26 @@ def configs2cmds(
     run_list = []
     args_update = update_dict_from_opt_args(args.opts[1:])
 
+    pref_step_output = None
     for conf_index, (data_configuration, output_forward_key) in enumerate(
         zip(configs, uof)
     ):
         if isinstance(data_configuration, str):
             # this is direct command
             # TODO: add support to str instead of [str, None]
-            run_list.append(data_configuration)
+            the_cmd = data_configuration
+            cmd_params = the_cmd.split(' ')
+            if cmd_params[0] == "sleepnow":
+                # we want to sleep before creating next run
+                time.sleep(int(cmd_params[1]))
+            else:
+                run_list.append(data_configuration)
             continue
         configuration_dict = deepcopy(default_parameters)
         configuration_dict.update(data_configuration)
         if output_forward_key is not None:
             if len(output_forward_key) > 0:
-                assert pref_step_output is not None
+                assert pref_step_output is not None, "Trying to pass output of the script previous to 0"
                 if type(output_forward_key) is dict:
                     key = list(output_forward_key.keys())[0]
                     path_format = list(output_forward_key.values())[0]
