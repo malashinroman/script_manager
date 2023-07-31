@@ -112,7 +112,7 @@ def write_wandb_dict(dict, commit=None):
 
         if not logged:
             print(
-                "WARNING: write_wandb_scalar has no effect, because logger is not initialized"
+                "WARNING: write_wandb has no effect, because logger is not initialized"
             )
 
 
