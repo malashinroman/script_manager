@@ -112,12 +112,16 @@ def configs2cmds(
     args_update = update_dict_from_opt_args(args.opts[1:])
 
     pref_step_output = None
-    for conf_index, (data_configuration, output_forward_key) in enumerate(
+    for conf_index, config_data  in enumerate(
         zip(configs, uof)
     ):
+        if isinstance(config_data, tuple) or isinstance(config_data, list) or len(config_data) > 1:
+            (data_configuration, output_forward_key) = config_data
+        else:
+            data_configuration = config_data
+            output_forward_key = None
+
         if isinstance(data_configuration, str):
-            # this is direct command
-            # TODO: add support to str instead of [str, None]
             the_cmd = data_configuration
             cmd_params = the_cmd.split(' ')
             if cmd_params[0] == "sleepnow":
