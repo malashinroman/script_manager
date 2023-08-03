@@ -3,10 +3,11 @@ import os.path as osp
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
+
+# local_config should be in the ../ folder
 from local_config import WANDB_LOGIN
 
 # from torch.utils.tensorboard import SummaryWriter
-from tensorboardX.writer import SummaryWriter
 
 __WANDB_LOG__ = None
 
@@ -17,6 +18,7 @@ class WandbLogger(object):
         super().__init__()
         self._args = args
         if args.tensorboard_folder is not None and len(args.tensorboard_folder) > 0:
+            from tensorboardX.writer import SummaryWriter
             self.use_tensorboard = True
             log_dir = osp.join(self._args.output_dir, "tensorboard")
             if self.__dict__.get("_writer") is None or self._writer is None:

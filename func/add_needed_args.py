@@ -20,7 +20,7 @@ def append_needed_args(parser):
     default_args.add_argument("--tag", default="")
     default_args.add_argument("--output_dir", type=str, default="")
     default_args.add_argument("--wandb_project_name", type=str, default=None)
-    default_args.add_argument("--tensorboard_folder", type=str, default="tensorboard")
+    default_args.add_argument("--tensorboard_folder", type=str, default=None)
     default_args.add_argument("--use_tensorboard", type=int, default=0)
     default_args.add_argument("--kill_concurrent_folders", type=int, default=0)
     default_args.add_argument("--random_seed", type=int, default=None)
