@@ -60,9 +60,13 @@ def increment_path(path, exist_ok=False, sep='', mkdir=False):
 
 def make_command2(
     param_dict: Dict[str, str],
-    script_name: str | list[str] = "",
-    folder_keys: list[str] = [],
-    appendix_keys: list[str] = [],
+    # FIXME: proper typing is not supported in python older 3.10
+    # script_name: str | list[str] = "",
+    # folder_keys: list[str] = [],
+    # appendix_keys: list[str] = [],
+    script_name = "",
+    folder_keys = [],
+    appendix_keys = [],
     work_dir: str = "",
 ):
     """
