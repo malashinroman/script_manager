@@ -84,7 +84,6 @@ def smart_parse_args(parser):
     args = prepare_wandb(args)
 
     if args.random_seed is not None:
-        __import__('pudb').set_trace()
         set_random_seed(args.random_seed)
 
     # create output dir if specified
