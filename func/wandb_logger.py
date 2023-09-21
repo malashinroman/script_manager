@@ -57,13 +57,17 @@ def update_args_from_wandb(args):
         return args
 
 
-import torch
-
-
 def filter_dict_for_dump(input):
     output = {}
+    check_torch = True
+    try:
+        import torch
+    except ImportError:
+        print("INFO: torch not found")
+        check_torch = False
+
     for key, val in input.items():
-        if type(val) is torch.Tensor:
+        if check_torch and type(val) is torch.Tensor:
             val = val.item()
         output[key] = val
 
@@ -106,7 +110,7 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
             )
 
 
-def write_wandb_dict(dict, commit=None):
+def write_wandb_dict(dict, commit=False):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
