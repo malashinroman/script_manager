@@ -71,7 +71,7 @@ def set_random_seed(random_seed, deterministic=False):
         torch.use_deterministic_algorithms(True)
         torch.backends.cudnn.deterministic = True
         os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-        os.environ["PYTHONHASHSEED"] = str(seed)
+        os.environ["PYTHONHASHSEED"] = str(random_seed)
 
 
 def convert_args_for_json(args):
