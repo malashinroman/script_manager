@@ -185,7 +185,8 @@ def configs2cmds(
         sleep_seconds = int(args.sleep)
     print("Going to sleep  seconds")
 
-    final_run_list.insert(0, f"sleep {sleep_seconds}")
+    if sleep_seconds > 0:
+        final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
 
 
