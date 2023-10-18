@@ -194,6 +194,12 @@ def run_cmds(run_list, cwd, args):
     run_async(run_list, parallel_num=args.parallel_num, cwd=cwd)
 
 
+def do_initial_args_checks(args):
+    assert (
+        args.configs2run is None or len(args.configs2run) >= args.parallel_num
+    ), f"Not enough configs to run specified by --configs2run: {len(args.configs2run)} vs {args.parallel_num} "
+
+
 def do_everything(
     default_parameters,
     configs,
@@ -219,6 +225,7 @@ def do_everything(
 
     if args is None:
         args = get_script_args()
+    do_initial_args_checks(args)
 
     work_dir = get_cwd(args, script_file)
     # configs = set_configs()
