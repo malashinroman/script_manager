@@ -105,8 +105,15 @@ def configs2cmds(
     wandb_project_name    : str, name of the wandb project
     work_dir              : str, path where to run the experiments
     """
+
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
+
+    # FIXME: no full functionality test
+    if args.configs2run is not None:
+        configs = [configs[i] for i in args.configs2run]
+        uof = [uof[i] for i in args.configs2run]
+
     assert len(uof) == len(configs)
 
     # folder_keys, appedix_keys = get_name_keys()
@@ -172,10 +179,11 @@ def configs2cmds(
         )
         run_list.append(cmd0)
 
-    if args.configs2run is not None:
-        final_run_list = [run_list[i] for i in args.configs2run]
-    else:
-        final_run_list = run_list
+    # if args.configs2run is not None:
+    #     final_run_list = [run_list[i] for i in args.configs2run]
+    # else:
+    #     final_run_list = run_list
+    final_run_list = run_list
 
     if "h" in args.sleep:
         sleep_seconds = int(args.sleep.strip("h")) * 60 * 60

@@ -7,15 +7,17 @@ from script_manager.func.script_parse_args import create_parser
 
 
 def set_gpus(args, gpus):
-    print(f"Setting custom GPU configuration, GPUs: {gpus}")
-    args.gpus = gpus
-    process_gpus(args)
+    if args.not_test:
+        print(f"Setting custom GPU configuration, GPUs: {gpus}")
+        args.gpus = gpus
+        process_gpus(args)
     return args
 
 
 def set_parallel_num(args, parallel_num):
-    print(f"Setting custom number of parallel processes: {parallel_num}")
-    args.parallel_num = parallel_num
+    if args.not_test:
+        print(f"Setting custom number of parallel processes: {parallel_num}")
+        args.parallel_num = parallel_num
     return args
 
 
