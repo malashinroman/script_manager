@@ -128,7 +128,6 @@ def run_async(run_list=[], parallel_num=2, cwd="."):
     param cwd          : current working directory
     return             :
     """
-    # __import__('pudb').set_trace()
     if parallel_num == 1:
         for cmd in run_list:
             print(f"cmd:{cmd}")
