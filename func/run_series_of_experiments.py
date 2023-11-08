@@ -76,18 +76,18 @@ def run_simple_parallel(run_list, parallel_num=2, cwd="."):
 def run_process_per_gpu(gpu_cmd_dict, parallel_num=2, cwd="."):
     gpu_num = len(gpu_cmd_dict)
 
-    progresses_dict = {g: [] for g in range(gpu_num)}
+    progresses_dict = {g: [] for g in gpu_cmd_dict.keys()}
     if isinstance(parallel_num, int):
         proc_per_gpu = [parallel_num // gpu_num] * gpu_num
 
-    for i in range(gpu_num):
+    for i, gpu_host_index in enumerate(gpu_cmd_dict.keys()):
         for j in range(proc_per_gpu[i]):
-            cmd = gpu_cmd_dict[i][j]
+            cmd = gpu_cmd_dict[gpu_host_index][j]
             command_params, my_env = get_command_params_environs(cmd)
-            progresses_dict[i].append(
+            progresses_dict[gpu_host_index].append(
                 subprocess.Popen(command_params, cwd=cwd, env=my_env)
             )
-            gpu_cmd_dict[i] = gpu_cmd_dict[i][1:]
+            gpu_cmd_dict[gpu_host_index] = gpu_cmd_dict[gpu_host_index][1:]
 
     for gpu_ind, gpu_progresses in progresses_dict.items():
         for progress in gpu_progresses:
@@ -95,20 +95,20 @@ def run_process_per_gpu(gpu_cmd_dict, parallel_num=2, cwd="."):
 
     while sum([len(v) for _, v in gpu_cmd_dict.items()]) > 0:
         for gpu_ind, gpu_progresses in progresses_dict.items():
-            for i in range(len(gpu_progresses)):
+            for gpu_host_index in range(len(gpu_progresses)):
                 print(
-                    f"gpu {gpu_ind} process {i} running: {gpu_progresses[i].poll() is None}"
+                    f"gpu {gpu_ind} process {gpu_host_index} running: {gpu_progresses[gpu_host_index].poll() is None}"
                 )
-                if not gpu_progresses[i].poll() is None:
+                if not gpu_progresses[gpu_host_index].poll() is None:
                     if len(gpu_cmd_dict[gpu_ind]) > 0:
                         cmd = gpu_cmd_dict[gpu_ind][0]
                         gpu_cmd_dict[gpu_ind] = gpu_cmd_dict[gpu_ind][1:]
                         command_params, my_env = get_command_params_environs(cmd)
-                        gpu_progresses[i] = subprocess.Popen(
+                        gpu_progresses[gpu_host_index] = subprocess.Popen(
                             command_params, cwd=cwd, env=my_env
                         )
                         print(
-                            f"gpu {gpu_ind} process {i} running: {gpu_progresses[i].poll() is None}"
+                            f"gpu {gpu_ind} process {gpu_host_index} running: {gpu_progresses[gpu_host_index].poll() is None}"
                         )
         time.sleep(10)
 
