@@ -85,10 +85,18 @@ def create_launch_commands(main_script, gpus2use, configs_number):
 
 
 def create_configs_and_launch_commands(
-    main_script, variable_parameters, gpus2use, dict2tag_func, base_tag
+    main_script,
+    variable_parameters,
+    gpus2use,
+    dict2tag_func,
+    base_tag,
+    random_shuffle=True,
 ):
     configs = create_configs(
-        variable_parameters, dict2tag_func=dict2tag_func, base_tag=base_tag
+        variable_parameters,
+        dict2tag_func=dict2tag_func,
+        base_tag=base_tag,
+        random_shuffle=random_shuffle,
     )
     launch_commands = create_launch_commands(main_script, gpus2use, len(configs))
     return configs, launch_commands
@@ -103,8 +111,8 @@ def do_parallel_parameter_search(
     variable_parameters,
     wandb_project_name,
     dict2tag_func=None,
+    random_shuffle=True,
 ):
-
     base_tag = os.path.split(script_file)[-1].split(".")[0]
     configs, launch_commands = create_configs_and_launch_commands(
         main_script,
@@ -112,6 +120,7 @@ def do_parallel_parameter_search(
         gpus2use=args.gpus,
         dict2tag_func=dict2tag_func,
         base_tag=base_tag,
+        random_shuffle=True,
     )
     do_everything(
         default_parameters=default_parameters,
