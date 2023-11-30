@@ -20,7 +20,7 @@ Results will be saved under <project_root>/train_results/script_date.
    `git clone [<hh](https://github.com/malashinroman/)https://github.com/malashinroman/project-name
    
 2.
-   ```
+  ```
   cd project-name
   git submodule init
   git submodule update
