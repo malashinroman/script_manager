@@ -14,7 +14,7 @@ Now you have control over the side project from script.
 Results will be saved under <project_root>/train_results/script_date.
 
 
-# How to use script_manager when it is already attached to project
+## How to use script_manager when it is already attached to project
 1. Clone the project
 
    `git clone [<hh](https://github.com/malashinroman/)https://github.com/malashinroman/<project-name>
@@ -37,7 +37,7 @@ WANDB_LOGIN="newton"
 
 `python scripts/2023/12/01/great_cool_script_for_training_agi_model.py`
 
-# important parameters to scripts
+## important parameters to scripts
 
 ```
    parser.add_argument(
