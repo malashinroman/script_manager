@@ -17,23 +17,22 @@ Results will be saved under <project_root>/train_results/script_date.
 ## How to use script_manager when it is already attached to project
 1. Clone the project
 
-   `git clone [<hh](https://github.com/malashinroman/)https://github.com/malashinroman/<project-name>
+   `git clone [<hh](https://github.com/malashinroman/)https://github.com/malashinroman/project-name
    
 2.
-   `cd <project-name>
-
-    git submodule init
-  
-    git submodule update`
-
-3. In the project's root:
+   ```
+  cd project-name
+  git submodule init
+  git submodule update
+  ```
+4. In the project's root:
    - modify `local_config.py` where local host information should be stored
    - create empy `train_results` folder
 local_config.py example:
 IMAGENET_PATH = "/media/Data2/datasets/ImageNet"
 WANDB_LOGIN="newton"
 
-4. Now you can try to run some script from `scripts` folder
+5. Now you can try to run some script from `scripts` folder
 
 `python scripts/2023/12/01/great_cool_script_for_training_agi_model.py`
 
