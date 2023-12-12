@@ -4,6 +4,7 @@ import random
 
 from script_manager.func.script_boilerplate import do_everything
 from script_manager.func.script_parse_args import create_parser
+from script_manager.scenarios.common import create_launch_commands
 
 
 def process_gpus(args):
@@ -34,6 +35,11 @@ def do_sequence(
     test_parameters,
     wandb_project_name,
 ):
+    if args.gpus != -1:
+        launch_commands = create_launch_commands(
+            launch_commands, args.gpus, len(configs)
+        )
+
     do_everything(
         default_parameters=default_parameters,
         configs=configs,

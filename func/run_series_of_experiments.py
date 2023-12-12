@@ -74,35 +74,52 @@ def run_simple_parallel(run_list, parallel_num=2, cwd="."):
 
 
 def run_process_per_gpu(gpu_cmd_dict, parallel_num=2, cwd="."):
+    """
+    Run a list of commands in parallel.
+    gpu_cmd_dict : dict of commands to be run on each gpu
+    parallel_num : number of commands to be run in parallel
+    cwd          : current working directory
+    """
     gpu_num = len(gpu_cmd_dict)
 
+    # Adjust the distribution of processes among GPUs
+    total_procs = min(parallel_num, sum(len(cmds) for cmds in gpu_cmd_dict.values()))
+    base_procs_per_gpu = total_procs // gpu_num
+    extra_procs = total_procs % gpu_num
+
+    proc_per_gpu = [
+        base_procs_per_gpu + (1 if i < extra_procs else 0) for i in range(gpu_num)
+    ]
+
     progresses_dict = {g: [] for g in gpu_cmd_dict.keys()}
-    if isinstance(parallel_num, int):
-        proc_per_gpu = [parallel_num // gpu_num] * gpu_num
+    next_cmd_index = {gpu_host_index: 0 for gpu_host_index in gpu_cmd_dict.keys()}
 
     for i, gpu_host_index in enumerate(gpu_cmd_dict.keys()):
-        for j in range(proc_per_gpu[i]):
-            cmd = gpu_cmd_dict[gpu_host_index][j]
-            command_params, my_env = get_command_params_environs(cmd)
-            progresses_dict[gpu_host_index].append(
-                subprocess.Popen(command_params, cwd=cwd, env=my_env)
-            )
-            gpu_cmd_dict[gpu_host_index] = gpu_cmd_dict[gpu_host_index][1:]
+        for _ in range(proc_per_gpu[i]):
+            if next_cmd_index[gpu_host_index] < len(gpu_cmd_dict[gpu_host_index]):
+                cmd = gpu_cmd_dict[gpu_host_index][next_cmd_index[gpu_host_index]]
+                command_params, my_env = get_command_params_environs(cmd)
+                progresses_dict[gpu_host_index].append(
+                    subprocess.Popen(command_params, cwd=cwd, env=my_env)
+                )
+                next_cmd_index[gpu_host_index] += 1
 
     for gpu_ind, gpu_progresses in progresses_dict.items():
         for progress in gpu_progresses:
             print(progress)
 
-    while sum([len(v) for _, v in gpu_cmd_dict.items()]) > 0:
+    while any(
+        next_cmd_index[gpu_ind] < len(gpu_cmd_dict[gpu_ind]) for gpu_ind in gpu_cmd_dict
+    ):
         for gpu_ind, gpu_progresses in progresses_dict.items():
             for gpu_host_index in range(len(gpu_progresses)):
                 print(
                     f"gpu {gpu_ind} process {gpu_host_index} running: {gpu_progresses[gpu_host_index].poll() is None}"
                 )
-                if not gpu_progresses[gpu_host_index].poll() is None:
-                    if len(gpu_cmd_dict[gpu_ind]) > 0:
-                        cmd = gpu_cmd_dict[gpu_ind][0]
-                        gpu_cmd_dict[gpu_ind] = gpu_cmd_dict[gpu_ind][1:]
+                if gpu_progresses[gpu_host_index].poll() is not None:
+                    if next_cmd_index[gpu_ind] < len(gpu_cmd_dict[gpu_ind]):
+                        next_index = next_cmd_index[gpu_ind]
+                        cmd = gpu_cmd_dict[gpu_ind][next_index]
                         command_params, my_env = get_command_params_environs(cmd)
                         gpu_progresses[gpu_host_index] = subprocess.Popen(
                             command_params, cwd=cwd, env=my_env
@@ -110,6 +127,7 @@ def run_process_per_gpu(gpu_cmd_dict, parallel_num=2, cwd="."):
                         print(
                             f"gpu {gpu_ind} process {gpu_host_index} running: {gpu_progresses[gpu_host_index].poll() is None}"
                         )
+                        next_cmd_index[gpu_ind] += 1
         time.sleep(10)
 
     print("All Threads are queued, let's see when they finish!")
@@ -118,6 +136,9 @@ def run_process_per_gpu(gpu_cmd_dict, parallel_num=2, cwd="."):
         for p in gpu_progresses:
             p.wait()
     print("Everything finished!")
+
+
+# Remember to define or import the function get_command_params_environs(cmd) as it's used in this script.
 
 
 def run_async(run_list=[], parallel_num=2, cwd="."):
