@@ -48,14 +48,16 @@ def get_cwd(args, file_path):
     print({"cwd": cwd})
     return cwd
 
+
 def get_key_val_from_key(key_word):
     val = "parameter_without_value"
     key = key_word
-    if '=' in key_word:
-        kv_list = key_word.split('=')
+    if "=" in key_word:
+        kv_list = key_word.split("=")
         key = kv_list[0]
         val = kv_list[1]
-    return key,val
+    return key, val
+
 
 def update_dict_from_opt_args(opt_args):
     ret_d = {}
@@ -63,8 +65,8 @@ def update_dict_from_opt_args(opt_args):
     for el in opt_args:
         if not (len(el)) < 1 and el[0] == "-":
             if current_key is not None:
-                key,val =get_key_val_from_key(current_key)
-                ret_d[key]=val
+                key, val = get_key_val_from_key(current_key)
+                ret_d[key] = val
             current_key = el.strip("-")
         else:
             assert current_key is not None
@@ -73,7 +75,7 @@ def update_dict_from_opt_args(opt_args):
             current_key = None
 
     if current_key is not None:
-        key,val =get_key_val_from_key(current_key)
+        key, val = get_key_val_from_key(current_key)
         ret_d[key] = val
 
     return ret_d
@@ -112,10 +114,12 @@ def configs2cmds(
     args_update = update_dict_from_opt_args(args.opts[1:])
 
     pref_step_output = None
-    for conf_index, config_data  in enumerate(
-        zip(configs, uof)
-    ):
-        if isinstance(config_data, tuple) or isinstance(config_data, list) or len(config_data) > 1:
+    for conf_index, config_data in enumerate(zip(configs, uof)):
+        if (
+            isinstance(config_data, tuple)
+            or isinstance(config_data, list)
+            or len(config_data) > 1
+        ):
             (data_configuration, output_forward_key) = config_data
         else:
             data_configuration = config_data
@@ -123,7 +127,7 @@ def configs2cmds(
 
         if isinstance(data_configuration, str):
             the_cmd = data_configuration
-            cmd_params = the_cmd.split(' ')
+            cmd_params = the_cmd.split(" ")
             if cmd_params[0] == "sleepnow":
                 # we want to sleep before creating next run
                 time.sleep(int(cmd_params[1]))
@@ -134,11 +138,15 @@ def configs2cmds(
         configuration_dict.update(data_configuration)
         if output_forward_key is not None:
             if len(output_forward_key) > 0:
-                assert pref_step_output is not None, "Trying to pass output of the script previous to 0"
+                assert (
+                    pref_step_output is not None
+                ), "Trying to pass output of the script previous to 0"
                 if type(output_forward_key) is dict:
                     key = list(output_forward_key.keys())[0]
                     path_format = list(output_forward_key.values())[0]
-                    configuration_dict[key] = path_format.format(pref_step_output)
+                    configuration_dict[key] = path_format.format(
+                        pref_step_output
+                    )
                 else:
                     configuration_dict[output_forward_key] = pref_step_output
         if args.enable_wandb:
@@ -177,7 +185,7 @@ def configs2cmds(
         sleep_seconds = int(args.sleep.strip("m")) * 60
     else:
         sleep_seconds = int(args.sleep)
-    print(f"Going to sleep  seconds")
+    print("Going to sleep {sleep_seconds}  seconds")
 
     final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
@@ -196,7 +204,7 @@ def do_everything(
     test_parameters,
     wandb_project_name,
     script_file,
-    args = None
+    args=None,
 ):
     """Function that will execute experiments in parallel or sequentially
     Args:
