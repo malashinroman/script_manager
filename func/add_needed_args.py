@@ -1,8 +1,10 @@
 import json
 import os
-from pathlib import PosixPath
 import pprint
+from pathlib import PosixPath
+
 import pkg_resources as pkg
+
 
 def str2intlist(v):
     return [int(x.strip()) for x in v.strip()[1:-1].split(",")]
@@ -25,50 +27,65 @@ def append_needed_args(parser):
     default_args.add_argument("--kill_concurrent_folders", type=int, default=0)
     default_args.add_argument("--random_seed", type=int, default=None)
 
+
 def dump_args_as_default_paraemeters(args):
     pprint.pprint(args.__dict__)
 
-def check_version(current='0.0.0', minimum='0.0.0', name='version ', pinned=False, hard=False, verbose=False):
+
+def check_version(
+    current="0.0.0",
+    minimum="0.0.0",
+    name="version ",
+    pinned=False,
+    hard=False,
+    verbose=False,
+):
     # Check version vs. required version
     current, minimum = (pkg.parse_version(x) for x in (current, minimum))
-    result = (current == minimum) if pinned else (current >= minimum) 
-    s = f'WARNING ⚠️ {name}{minimum} is required by script_manager, but {name}{current} is currently installed' 
+    result = (current == minimum) if pinned else (current >= minimum)
+    s = f"WARNING ⚠️ {name}{minimum} is required by script_manager, but {name}{current} is currently installed"
     if hard:
         assert result, s  # assert min requirements met
     if verbose and not result:
-        print('s')
+        print("s")
     return result
 
+
 def set_random_seed(random_seed, deterministic=False):
-        import numpy as np
-        import torch
-        import random
-        np.random.seed(random_seed)
-        random.seed(random_seed)
-        torch.manual_seed(random_seed)
-        torch.cuda.manual_seed(random_seed)
-        torch.cuda.manual_seed_all(random_seed)
-        torch.backends.cudnn.benchmark = False
-        # FIXME: causes error, when adding CUBLAS_... env variable
-        # torch.use_deterministic_algorithms(True)
-        # torch.backends.cudnn.deterministic = True
-        if deterministic and check_version(torch.__version__, '1.12.0'):  # https://github.com/ultralytics/yolov5/pull/8213
-            torch.use_deterministic_algorithms(True)
-            torch.backends.cudnn.deterministic = True
-            os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
-            os.environ['PYTHONHASHSEED'] = str(seed)
+    import random
+
+    import numpy as np
+    import torch
+
+    np.random.seed(random_seed)
+    random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    torch.cuda.manual_seed(random_seed)
+    torch.cuda.manual_seed_all(random_seed)
+    torch.backends.cudnn.benchmark = False
+    # FIXME: causes error, when adding CUBLAS_... env variable
+    # torch.use_deterministic_algorithms(True)
+    # torch.backends.cudnn.deterministic = True
+    # https://github.com/ultralytics/yolov5/pull/8213
+    if deterministic and check_version(torch.__version__, "1.12.0"):
+        torch.use_deterministic_algorithms(True)
+        torch.backends.cudnn.deterministic = True
+        os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+        os.environ["PYTHONHASHSEED"] = str(random_seed)
+
 
 def convert_args_for_json(args):
     args_dict = args.__dict__
 
     json_dict = {}
-    for k,v in args_dict.items():
+    for k, v in args_dict.items():
         if isinstance(v, PosixPath):
             v_save = str(v)
         else:
             v_save = v
         json_dict[k] = v_save
     return json_dict
+
 
 def smart_parse_args(parser):
     """

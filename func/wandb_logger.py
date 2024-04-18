@@ -13,12 +13,14 @@ __WANDB_LOG__ = None
 
 import wandb
 
+
 class WandbLogger(object):
     def __init__(self, args, wandb_entity):
         super().__init__()
         self._args = args
         if args.tensorboard_folder is not None and len(args.tensorboard_folder) > 0:
             from tensorboardX.writer import SummaryWriter
+
             self.use_tensorboard = True
             log_dir = osp.join(self._args.output_dir, "tensorboard")
             if self.__dict__.get("_writer") is None or self._writer is None:
@@ -55,13 +57,17 @@ def update_args_from_wandb(args):
         return args
 
 
-import torch
-
-
 def filter_dict_for_dump(input):
     output = {}
+    check_torch = True
+    try:
+        import torch
+    except ImportError:
+        print("INFO: torch not found")
+        check_torch = False
+
     for key, val in input.items():
-        if type(val) is torch.Tensor:
+        if check_torch and type(val) is torch.Tensor:
             val = val.item()
         output[key] = val
 
@@ -104,7 +110,7 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
             )
 
 
-def write_wandb_dict(dict, commit=None):
+def write_wandb_dict(dict, commit=False):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
@@ -119,8 +125,23 @@ def write_wandb_dict(dict, commit=None):
 
 
 def write_wandb_bar(
-    tag, bars_val, indexes_label="classifier index", height_label="calls", commit=None
+    tag: str,
+    bars_val,
+    indexes_label="X axis",
+    height_label="Y axis",
+    as_image=False,
+    commit=None,
 ):
+    """
+    Write a bar plot to wandb
+    :param tag: tag for wandb log
+    :param bars_val: elements for bars (Tensor (cpu), list, np.array)
+    :param indexes_label: label for x axis
+    :param height_label: label for y axis
+    :param as_image: if True, will log as image, else as plt (need plotty)
+    :commit: if True, will commit new log point to wandb
+    :return:
+    """
     if __WANDB_LOG__ is not None:
         if __WANDB_LOG__.use_wandb:
             plt.figure()
@@ -129,9 +150,10 @@ def write_wandb_bar(
             )
             plt.xlabel(indexes_label)
             plt.ylabel(height_label)
-            # fig.set_size_inches(6, 3)
-            # wandb.log({'rand'})
-            write_wandb_dict({tag: plt}, commit=commit)
+            if as_image:
+                write_wandb_dict({tag: wandb.Image(plt)}, commit=commit)
+            else:
+                write_wandb_dict({tag: plt}, commit=commit)
             plt.close()
 
 

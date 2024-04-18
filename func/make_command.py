@@ -1,14 +1,14 @@
-import datetime
+# import datetime
 import os
-from typing import Dict
 from pathlib import Path
+from typing import Dict
 
 base_params = None
 
 
 def dict_to_string(dictionary: dict) -> str:
     string = ""
-    for (k, v) in dictionary.items():
+    for k, v in dictionary.items():
         if k == "load_checkpoint_DM":
             v = os.path.basename(os.path.dirname(v))
         if type(k) is not str:
@@ -40,15 +40,18 @@ def path_from_keylist(dictionary: dict, keys: list) -> str:
         path = os.path.join(path, folder)
     return path
 
-def increment_path(path, exist_ok=False, sep='', mkdir=False):
+
+def increment_path(path, exist_ok=False, sep="", mkdir=False):
     # Increment file or directory path, i.e. runs/exp --> runs/exp{sep}2, runs/exp{sep}3, ... etc.
     path = Path(path)  # os-agnostic
     if path.exists() and not exist_ok:
-        path, suffix = (path.with_suffix(''), path.suffix) if path.is_file() else (path, '')
+        path, suffix = (
+            (path.with_suffix(""), path.suffix) if path.is_file() else (path, "")
+        )
 
         # Method 1
         for n in range(2, 9999):
-            p = f'{path}{sep}{n:03d}{suffix}'  # increment path
+            p = f"{path}{sep}{n:03d}{suffix}"  # increment path
             if not os.path.exists(p):  #
                 break
         path = Path(p)
@@ -58,15 +61,16 @@ def increment_path(path, exist_ok=False, sep='', mkdir=False):
 
     return path
 
+
 def make_command2(
     param_dict: Dict[str, str],
     # FIXME: proper typing is not supported in python older 3.10
     # script_name: str | list[str] = "",
     # folder_keys: list[str] = [],
     # appendix_keys: list[str] = [],
-    script_name = "",
-    folder_keys = [],
-    appendix_keys = [],
+    script_name="",
+    folder_keys=[],
+    appendix_keys=[],
     work_dir: str = "",
 ):
     """
@@ -84,16 +88,15 @@ def make_command2(
 
     appendix_dict = {k: param_dict[k] for k in appendix_keys}
     appendix = dict_to_string(appendix_dict)
-    time = (
-        datetime.datetime.now().isoformat(sep="T").replace(":", "-").replace(".", "_")
-    )
+    # time = (
+    #     datetime.datetime.now().isoformat(sep="T").replace(":", "-").replace(".", "_")
+    # )
     path = path_from_keylist(param_dict, folder_keys)
 
     # time labeling is clumsy
     # output = os.path.join(work_dir, path, appendix + time)
     output = os.path.join(work_dir, path, appendix)
     output = str(increment_path(output))
-
 
     if not os.path.exists(output):
         os.makedirs(output)
@@ -103,14 +106,14 @@ def make_command2(
         if len(script_name.split(" ")[0]) > 0:
             fist_c = script_name.split(" ")
             if fist_c[0].endswith(".py"):
-                cmd = f"python "
-            elif fist_c == 'torchrun':
+                cmd = "python "
+            elif fist_c == "torchrun":
                 pass
                 # add ports to enable multiple instances for
                 # multiple ports
 
     cmd += f"{script_name} "
-    if not "output_dir" in param_dict:
+    if "output_dir" not in param_dict:
         cmd += f"--output_dir={output} "
         print(output)
     else:
@@ -124,7 +127,7 @@ def make_command2(
 
     for key, val in param_dict.items():
         if val != "parameter_without_value":
-            if not isinstance(val,str) or " " not in val:
+            if not isinstance(val, str) or " " not in val:
                 cmd += f"--{key}={val} "
             else:
                 cmd += f"--{key} {val} "

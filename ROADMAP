@@ -1,0 +1,13 @@
+Rename:
+    create_parser -> master_script_parser
+
+Functionality:
+    do not create all folders when --configs2run is used
+
+Reliability:
+    implement tests
+
+Document use-cases:
+- running in parallel
+- sleep
+- 

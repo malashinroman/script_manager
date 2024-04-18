@@ -105,8 +105,20 @@ def configs2cmds(
     wandb_project_name    : str, name of the wandb project
     work_dir              : str, path where to run the experiments
     """
+
     configs = [f[0] for f in full_configs]
     uof = [f[1] for f in full_configs]
+
+    # FIXME: no full functionality test
+    if args.configs2run is not None:
+        if args.configs2run[0] < 0:
+            config_range = range(args.configs2run[1], args.configs2run[2])
+            configs = [configs[i] for i in config_range]
+            uof = [uof[i] for i in config_range]
+        else:
+            configs = [configs[i] for i in args.configs2run]
+            uof = [uof[i] for i in args.configs2run]
+
     assert len(uof) == len(configs)
 
     # folder_keys, appedix_keys = get_name_keys()
@@ -174,10 +186,11 @@ def configs2cmds(
         )
         run_list.append(cmd0)
 
-    if args.configs2run is not None:
-        final_run_list = [run_list[i] for i in args.configs2run]
-    else:
-        final_run_list = run_list
+    # if args.configs2run is not None:
+    #     final_run_list = [run_list[i] for i in args.configs2run]
+    # else:
+    #     final_run_list = run_list
+    final_run_list = run_list
 
     if "h" in args.sleep:
         sleep_seconds = int(args.sleep.strip("h")) * 60 * 60
@@ -185,14 +198,21 @@ def configs2cmds(
         sleep_seconds = int(args.sleep.strip("m")) * 60
     else:
         sleep_seconds = int(args.sleep)
-    print("Going to sleep {sleep_seconds}  seconds")
+    print(f"Going to sleep {sleep_seconds}  seconds")
 
-    final_run_list.insert(0, f"sleep {sleep_seconds}")
+    if sleep_seconds > 0:
+        final_run_list.insert(0, f"sleep {sleep_seconds}")
     return final_run_list
 
 
 def run_cmds(run_list, cwd, args):
     run_async(run_list, parallel_num=args.parallel_num, cwd=cwd)
+
+
+def do_initial_args_checks(args):
+    assert (
+        args.configs2run is None or len(args.configs2run) >= args.parallel_num
+    ), f"Not enough configs to run specified by --configs2run: {len(args.configs2run)} vs {args.parallel_num} "
 
 
 def do_everything(
@@ -220,6 +240,7 @@ def do_everything(
 
     if args is None:
         args = get_script_args()
+    do_initial_args_checks(args)
 
     work_dir = get_cwd(args, script_file)
     # configs = set_configs()
