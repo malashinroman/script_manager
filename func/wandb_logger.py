@@ -18,7 +18,10 @@ class WandbLogger(object):
     def __init__(self, args, wandb_entity):
         super().__init__()
         self._args = args
-        if args.tensorboard_folder is not None and len(args.tensorboard_folder) > 0:
+        if (
+            args.tensorboard_folder is not None
+            and len(args.tensorboard_folder) > 0
+        ):
             from tensorboardX.writer import SummaryWriter
 
             self.use_tensorboard = True
@@ -35,7 +38,9 @@ class WandbLogger(object):
         if args.wandb_project_name is not None:
             self.use_wandb = True
             wandb.init(
-                project=args.wandb_project_name, entity=wandb_entity, config=args
+                project=args.wandb_project_name,
+                entity=wandb_entity,
+                config=args,
             )
             wandb.run.name = args.tag + "_" + wandb.run.name
         else:
@@ -74,7 +79,7 @@ def filter_dict_for_dump(input):
     return output
 
 
-def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
+def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=False):
     global __WANDB_LOG__
     logged = 0
     if __WANDB_LOG__ is not None:
@@ -84,7 +89,9 @@ def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=None):
                 if "global_step" in log_dict:
                     global_step = log_dict["global_step"]
                 for key, val in log_dict.items():
-                    __WANDB_LOG__._writer.add_scalar(key, val, global_step=global_step)
+                    __WANDB_LOG__._writer.add_scalar(
+                        key, val, global_step=global_step
+                    )
 
                 # real_tag = list(log_dict.keys())[0]
                 # scalar_value = log_dict[real_tag]
@@ -146,7 +153,8 @@ def write_wandb_bar(
         if __WANDB_LOG__.use_wandb:
             plt.figure()
             plt.bar(
-                list(range(len(bars_val))), [bars_val[i] for i in range(len(bars_val))]
+                list(range(len(bars_val))),
+                [bars_val[i] for i in range(len(bars_val))],
             )
             plt.xlabel(indexes_label)
             plt.ylabel(height_label)
