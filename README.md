@@ -36,7 +36,45 @@ WANDB_LOGIN="newton"
 
 `python scripts/2023/12/01/great_cool_script_for_training_agi_model.py`
 
-## important parameters to scripts
+
+## Scenarios
+
+### Sequence of Scripts to be Launched in Parallel or Consecutively
+
+Organize a master script that will prepare configurations:
+```python
+from script_manager.scenarios.parallel_sequence import do_sequence, parse_args
+```
+
+then get configs you want to run and finnaly launch everythin with do_sequece function
+
+```python
+    do_sequence(
+        args,
+        configs,
+        default_parameters,
+        MAIN_SCRIPT,
+        __file__,
+        test_parameters,
+        WANDB_PROJECT_NAME,
+    )
+```
+Put this master script inside the project scripts/y/m/d, where scripts/ is nearby script_manager. 
+
+In shell exectue the master_script.py.
+
+example1:
+```bash
+python scripts/24/04/23/master_script.py -n -e -g 1 2 3 --processes 3 --parallel_num 3 
+```
+- -n will remove test parameters
+- -e will add logging to wandb
+- -g will specifiy which gpus will be used (achieved by adding CUDA_VISIBLE_DEVICES under the hood)
+- --parallel_num and --processes specify number of processes that will evoked and executed in parallel, 3 processes will wait for new configs until the end of everything 
+
+
+
+## important parameters (script)
 
 ```
    parser.add_argument(
