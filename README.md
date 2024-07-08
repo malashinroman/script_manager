@@ -7,6 +7,16 @@ Consider side project.
          git submodule add https://github.com/malashinroman/script_manager
 2. Create ./scripts folder in the project's root and copy script_manager/year/month/day/launch_script.py there. This is script to substitute bash scripts for providing parameters
 3. Find where the project implement ArgumentParser and substitute parse_args() with smart_parse_args().
+```python
+    # in the master project's main script
+    from script_manager.func.add_needed_args import smart_parse_args
+
+    # I assume project uses argparse by default
+    # replace parsing of the parameters
+    # args = parser.parse_args()
+    args = smart_parse_args(parser)
+
+```
 4. Find where the project saves data and make sure that from now it will save it to args.output_dir.
 5. (optionaly) use write_wandb_scalar or write_wandb_dict to log data from the project.
 
