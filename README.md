@@ -5,7 +5,7 @@ Consider side project.
 1. Add script_manager as submodule (script_manager has to appear in the root of the project)
 
          git submodule add https://github.com/malashinroman/script_manager
-2. Create ./scripts folder in the project's root and copy script_manager/year/month/day/launch_script.py there. This is script to substitute bash scripts for providing parameters
+2. Create ./scripts and ./tran_results folders in the project's root and copy script_manager/year/month/day/launch_script.py there. This is script to substitute bash scripts for providing parameters
 3. Find where the project implement ArgumentParser and substitute parse_args() with smart_parse_args().
 ```python
     # in the master project's main script
