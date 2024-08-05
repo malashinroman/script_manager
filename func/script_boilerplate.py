@@ -111,13 +111,17 @@ def configs2cmds(
 
     # FIXME: no full functionality test
     if args.configs2run is not None:
+        # if negative, then reverse order
         if args.configs2run[0] < 0:
             config_range = range(args.configs2run[1], args.configs2run[2])
-            configs = [configs[i] for i in config_range]
-            uof = [uof[i] for i in config_range]
         else:
-            configs = [configs[i] for i in args.configs2run]
-            uof = [uof[i] for i in args.configs2run]
+            config_range = args.configs2run
+        configs = [configs[i] for i in config_range]
+        uof = [uof[i] for i in config_range]
+        if type(main_script_container) is list:
+            main_script_container = [
+                main_script_container[i] for i in config_range
+            ]
 
     assert len(uof) == len(configs)
 
