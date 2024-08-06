@@ -1,7 +1,3 @@
-import itertools
-import os
-import random
-
 from script_manager.func.script_boilerplate import do_everything
 from script_manager.func.script_parse_args import create_parser
 from script_manager.scenarios.common import create_launch_commands
@@ -19,7 +15,9 @@ def parse_args():
     parser = create_parser()
     parser.add_argument("--ssd", type=int, default=0)
     parser.add_argument("--processes", type=int, default=0)
-    parser.add_argument("--wandb_project_name", "-w", type=str, default="avalanche")
+    parser.add_argument(
+        "--wandb_project_name", "-w", type=str, default="avalanche"
+    )
     parser.add_argument("--gpus", "-g", type=int, nargs="*", default=-1)
     args = parser.parse_args()
     process_gpus(args)
