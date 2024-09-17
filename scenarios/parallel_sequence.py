@@ -32,6 +32,8 @@ def do_sequence(
     script_file,
     test_parameters,
     wandb_project_name,
+    extra_folder_keys=[],
+    extra_appendix_keys=[],
 ):
     if args.gpus != -1:
         launch_commands = create_launch_commands(
@@ -41,8 +43,8 @@ def do_sequence(
     do_everything(
         default_parameters=default_parameters,
         configs=configs,
-        extra_folder_keys=[],
-        appendix_keys=[],
+        extra_folder_keys=extra_folder_keys,
+        appendix_keys=extra_appendix_keys,
         main_script=launch_commands,
         test_parameters=test_parameters,
         wandb_project_name=wandb_project_name,
