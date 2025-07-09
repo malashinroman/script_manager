@@ -1,13 +1,14 @@
 import os
 import subprocess
 import time
+import shlex
 
 ENVIRONS_TO_GET = ["CUDA_VISIBLE_DEVICES"]
 
 
 def get_command_params_environs(cmd: str):
     """Get command, params and environs from a string."""
-    cmd_words = cmd.split(" ")
+    cmd_words = shlex.split(cmd)  # Use shlex.split to properly handle quoted strings
     command_params = []
     environs = {}
     my_env = os.environ.copy()

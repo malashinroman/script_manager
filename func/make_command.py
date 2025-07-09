@@ -130,7 +130,8 @@ def make_command2(
             if not isinstance(val, str) or " " not in val:
                 cmd += f"--{key}={val} "
             else:
-                cmd += f"--{key} {val} "
+                # For values with spaces, use = format and ensure proper quoting
+                cmd += f"--{key}={val} "
         else:
             cmd += f"--{key} "
 
