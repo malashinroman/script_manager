@@ -131,7 +131,8 @@ def make_command2(
                 cmd += f"--{key}={val} "
             else:
                 # For values with spaces, use = format and ensure proper quoting
-                cmd += f"--{key}={val} "
+                import shlex
+                cmd += f"--{key}={shlex.quote(str(val))} "
         else:
             cmd += f"--{key} "
 
