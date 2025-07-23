@@ -37,6 +37,13 @@ class WandbLogger(object):
 
         if args.wandb_project_name is not None:
             self.use_wandb = True
+            use_key=True
+            try:
+                from local_config import WANDB_KEY
+            except ImportError:
+                use_key = False
+            if use_key:
+                wandb.login(key=WANDB_KEY)
             wandb.init(
                 project=args.wandb_project_name,
                 entity=wandb_entity,
