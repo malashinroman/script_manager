@@ -1,6 +1,6 @@
 from script_manager.func.script_boilerplate import do_everything
 from script_manager.func.script_parse_args import create_parser
-from script_manager.scenarios.common import create_launch_commands
+from script_manager.scenarios.common import create_launch_commands, str2list
 
 
 def process_gpus(args):
@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument(
         "--wandb_project_name", "-w", type=str, default="avalanche"
     )
-    parser.add_argument("--gpus", "-g", type=int, nargs="*", default=-1)
+    parser.add_argument("--gpus", "-g", type=str2list, default=None)
     args = parser.parse_args()
     process_gpus(args)
     return args
@@ -35,7 +35,7 @@ def do_sequence(
     extra_folder_keys=[],
     extra_appendix_keys=[],
 ):
-    if args.gpus != -1:
+    if args is not None and args.gpus != -1:
         launch_commands = create_launch_commands(
             launch_commands, args.gpus, len(configs)
         )
