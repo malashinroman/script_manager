@@ -21,7 +21,10 @@ def append_needed_args(parser):
     default_args = parser.add_argument_group("default_args")
     default_args.add_argument("--tag", default="")
     default_args.add_argument("--output_dir", type=str, default="")
-    default_args.add_argument("--wandb_project_name", type=str, default=None)
+    default_args.add_argument("--logger_type", type=str, default="wandb")
+    default_args.add_argument(
+        "--wandb_project_name", "--logger_project_name", type=str, default=None
+    )
     default_args.add_argument("--tensorboard_folder", type=str, default=None)
     default_args.add_argument("--use_tensorboard", type=int, default=0)
     default_args.add_argument("--kill_concurrent_folders", type=int, default=0)
@@ -96,9 +99,9 @@ def smart_parse_args(parser):
     """
     append_needed_args(parser)
     args = parser.parse_args()
-    from script_manager.func.wandb_logger import prepare_wandb
+    from script_manager.func.wandb_logger import prepare_logger
 
-    args = prepare_wandb(args)
+    args = prepare_logger(args)
 
     if args.random_seed is not None:
         set_random_seed(args.random_seed)

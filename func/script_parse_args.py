@@ -26,9 +26,11 @@ def create_parser():
     parser.add_argument(
         "-e",
         "--enable_wandb",
+        "--enable_logger",
         action="store_true",
         help="if set to True, than wandb will be enabled",
     )
+
     parser.add_argument(
         "-p",
         "--parallel_num",
