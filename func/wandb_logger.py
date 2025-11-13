@@ -3,6 +3,8 @@ import os.path as osp
 from copy import deepcopy
 import atexit
 import signal
+from datetime import datetime
+import uuid
 
 import matplotlib.pyplot as plt
 
@@ -100,7 +102,11 @@ class MlflowLogger(object):
                 mlflow.set_experiment(args.wandb_project_name)
             except Exception:
                 pass
-        mlflow.start_run(run_name=args.tag)
+        # Create a unique run name similar to wandb's auto-naming
+        base_name = getattr(args, "tag", "run")
+        unique_suffix = datetime.now().strftime("m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
+        run_name = f"{base_name}_{unique_suffix}"
+        mlflow.start_run(run_name=run_name)
 
         # Ensure runs are always properly ended
         atexit.register(self._end_run_safely)
@@ -168,6 +174,7 @@ def filter_dict_for_dump(input):
 
 
 def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=False):
+    __import__('pudb').set_trace()
     global __WANDB_LOG__
     global __MLFLOW_LOG__
     logged = 0
