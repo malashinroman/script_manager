@@ -174,7 +174,6 @@ def filter_dict_for_dump(input):
 
 
 def write_wandb_scalar(tag, scalar_value=None, global_step=None, commit=False):
-    __import__('pudb').set_trace()
     global __WANDB_LOG__
     global __MLFLOW_LOG__
     logged = 0
